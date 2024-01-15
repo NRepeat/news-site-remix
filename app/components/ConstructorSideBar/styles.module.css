@@ -1,0 +1,13 @@
+.sideBar {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 1rem;
+  width: 400px;
+  max-width: 400px;
+  height: 100%;
+  overflow-y: auto;
+  background-color: rgb(19, 55, 87);
+  border: 2px solid rgb(11, 32, 50);
+  padding: 1rem;
+}

@@ -1,4 +1,7 @@
+import {cssBundleHref} from '@remix-run/css-bundle';
+import type {LinksFunction} from '@remix-run/node';
 import {
+  Link,
   Links,
   LiveReload,
   Meta,
@@ -6,13 +9,15 @@ import {
   Scripts,
   ScrollRestoration,
 } from '@remix-run/react';
-import {cssBundleHref} from '@remix-run/css-bundle';
-import type {LinksFunction} from '@remix-run/node';
+import ConstructorContextProvider from './context/ConstructorContext/ConstructorContext';
+import globalStylesHref from './styles/global.css';
+import resetStylesHref from './styles/reset.css';
 
 export const links: LinksFunction = () => [
+  {rel: 'stylesheet', href: resetStylesHref},
+  {rel: 'stylesheet', href: globalStylesHref},
   ...(cssBundleHref ? [{rel: 'stylesheet', href: cssBundleHref}] : []),
 ];
-
 export default function App() {
   return (
     <html lang="en">
@@ -23,7 +28,11 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <Outlet />
+        <ConstructorContextProvider>
+          <Link to={'/constructor'}>constructor</Link>
+          <Outlet />
+        </ConstructorContextProvider>
+
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
