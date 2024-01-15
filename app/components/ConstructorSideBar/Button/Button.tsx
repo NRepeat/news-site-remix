@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import {PageBlock} from '~/components/PageConstructorBlocks/PageConstructorBlocks';
 import {Button} from '~/ui/Button/Button';
 import styles from './styles.module.css';
+
 const ConstructorSideBarButton = ({pageBlock}: {pageBlock: PageBlock}) => {
   const {icon: Icons, label} = pageBlock.constructorSideBarButton;
   const draggable = useDraggable({
@@ -25,7 +26,7 @@ const ConstructorSideBarButton = ({pageBlock}: {pageBlock: PageBlock}) => {
     </button>
   );
 };
-export const ConstructorSideBarButtonDraggableOverlay = ({
+export const ConstructorSidebarButtonDraggableOverlay = ({
   pageBlock,
 }: {
   pageBlock: PageBlock;

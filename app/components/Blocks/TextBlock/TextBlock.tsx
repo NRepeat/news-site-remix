@@ -43,9 +43,9 @@ function ConstructorComponent({
   const textElement = elementInstance as TextBlockInstanceType;
   const {label, placeHolder} = textElement.additionalProperties;
   return (
-    <div className={styles.container}>
+    <>
       <Label>{label}</Label>
       <textarea className={styles.textarea} placeholder={placeHolder} />
-    </div>
+    </>
   );
 }

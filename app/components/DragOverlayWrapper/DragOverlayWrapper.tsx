@@ -1,6 +1,6 @@
 import {Active, DragOverlay, useDndMonitor} from '@dnd-kit/core';
 import {useState} from 'react';
-import {ConstructorSideBarButtonDraggableOverlay} from '../ConstructorSideBar/Button/Button';
+import {ConstructorSidebarButtonDraggableOverlay} from '../ConstructorSideBar/Button/Button';
 import {
   BlocksType,
   PageBlocks,
@@ -23,11 +23,17 @@ const DragOverlayWrapper = () => {
   const isSidebarButtonElement =
     draggedElement.data?.current?.isConstructorButtonElement;
   let node;
+  let type;
   if (isSidebarButtonElement) {
-    const type = draggedElement.data?.current?.type as BlocksType;
+    type = draggedElement.data?.current?.type as BlocksType;
     node = (
-      <ConstructorSideBarButtonDraggableOverlay pageBlock={PageBlocks[type]} />
+      <ConstructorSidebarButtonDraggableOverlay pageBlock={PageBlocks[type]} />
     );
+  }
+  const isConstructorElement =
+    draggedElement.data?.current?.isConstructorElement;
+  if (isConstructorElement) {
+    type = draggedElement.data?.current?.type as BlocksType;
   }
   return <DragOverlay>{node}</DragOverlay>;
 };

@@ -10,6 +10,7 @@ type PageConstructorContextType = {
     index: number;
     element: PageBlockInstance;
   }) => void;
+  removeElement: ({id}: {id: string}) => void;
 };
 
 export const PageConstructorContext =
@@ -21,6 +22,7 @@ const ConstructorContextProvider = ({
   children: React.ReactNode;
 }) => {
   const [elements, setElement] = useState<PageBlockInstance[] | null>([]);
+
   const addElement = ({
     element,
     index,
@@ -38,8 +40,19 @@ const ConstructorContextProvider = ({
     });
   };
 
+  const removeElement = ({id}: {id: string}) => {
+    setElement(prev => {
+      if (Array.isArray(prev)) {
+        return prev.filter(element => element.id !== id);
+      }
+      return prev;
+    });
+  };
+
   return (
-    <PageConstructorContext.Provider value={{elements, addElement}}>
+    <PageConstructorContext.Provider
+      value={{elements, addElement, removeElement}}
+    >
       {children}
     </PageConstructorContext.Provider>
   );
