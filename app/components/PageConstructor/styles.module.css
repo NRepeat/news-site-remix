@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   width: 100%;
+  height: 100vh;
 }
 
 .pageNameContainer {
@@ -37,7 +38,7 @@
   overflow-y: auto;
   justify-content: center;
   width: 100%;
-  height: 100vh;
+  height: 100%;
   background-color: rgb(45, 99, 146);
   background-image: url('../../assets/graph-paper.svg');
 }

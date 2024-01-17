@@ -1,13 +1,13 @@
 import {cssBundleHref} from '@remix-run/css-bundle';
-import type {LinksFunction} from '@remix-run/node';
+import {type LinksFunction} from '@remix-run/node';
 import {
-  Link,
   Links,
   LiveReload,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
+  json,
 } from '@remix-run/react';
 import ConstructorContextProvider from './context/ConstructorContext/ConstructorContext';
 import globalStylesHref from './styles/global.css';
@@ -18,6 +18,15 @@ export const links: LinksFunction = () => [
   {rel: 'stylesheet', href: globalStylesHref},
   ...(cssBundleHref ? [{rel: 'stylesheet', href: cssBundleHref}] : []),
 ];
+
+export async function action() {
+  try {
+    return json({});
+  } catch (error) {
+    throw new Error('Not found');
+  }
+}
+
 export default function App() {
   return (
     <html lang="en">
@@ -29,7 +38,6 @@ export default function App() {
       </head>
       <body>
         <ConstructorContextProvider>
-          <Link to={'/constructor'}>constructor</Link>
           <Outlet />
         </ConstructorContextProvider>
 

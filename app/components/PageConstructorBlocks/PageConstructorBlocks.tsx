@@ -15,9 +15,12 @@ export type PageBlock = {
     icon: IconType;
     label: string;
   };
-  constructorComponent: React.FC<{elementInstance: PageBlockInstance}>;
-  previewComponent: React.FC;
-  propertiesComponent: React.FC;
+  constructorComponent: React.FC<{
+    elementInstance: PageBlockInstance;
+    editorMode: boolean;
+  }>;
+  previewComponent: React.FC<{elementInstance: PageBlockInstance}>;
+  propertiesComponent: React.FC<{elementInstance: PageBlockInstance}>;
 };
 
 export type PageBlocksType = {
@@ -27,9 +30,3 @@ export type PageBlocksType = {
 export const PageBlocks: PageBlocksType = {
   TextBlock: TextBlock,
 };
-
-const PageConstructorBlocks = () => {
-  return <div>PageConstructorElements</div>;
-};
-
-export default PageConstructorBlocks;

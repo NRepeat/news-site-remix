@@ -1,13 +1,13 @@
 import {useDraggable, useDroppable} from '@dnd-kit/core';
-import {useState} from 'react';
-import {FaRegTrashAlt} from 'react-icons/fa';
-import useConstructor from '~/hooks/useConstructor';
-import {Button} from '~/ui/Button/Button';
+import {useContext} from 'react';
+
 import {
   PageBlockInstance,
   PageBlocks,
 } from '../PageConstructorBlocks/PageConstructorBlocks';
 import styles from './styles.module.css';
+import clsx from 'clsx';
+import {PageConstructorContext} from '~/context/ConstructorContext/ConstructorContext';
 
 const ConstructorElementWrapper = ({element}: {element: PageBlockInstance}) => {
   const draggable = useDraggable({
@@ -18,9 +18,14 @@ const ConstructorElementWrapper = ({element}: {element: PageBlockInstance}) => {
       isConstructorElement: true,
     },
   });
+  const context = useContext(PageConstructorContext);
 
-  const {removeElement} = useConstructor();
-  const [mouseIsOver, setMouseIsOver] = useState<boolean>(false);
+  if (!context) {
+    throw new Error('Not constructor context');
+  }
+
+  const {setSelectedElement, selectedElement} = context;
+
   const droppableTop = useDroppable({
     id: element.id + '-top',
     data: {
@@ -37,39 +42,38 @@ const ConstructorElementWrapper = ({element}: {element: PageBlockInstance}) => {
       isBottomHalfDroppable: true,
     },
   });
+  if (draggable.isDragging) return null;
   const ConstructorElement = PageBlocks[element.type].constructorComponent;
+
   return (
     <div
       ref={draggable.setNodeRef}
       className={styles.dropContainer}
-      onMouseEnter={() => setMouseIsOver(true)}
-      onMouseLeave={() => setMouseIsOver(false)}
       {...draggable.attributes}
       {...draggable.listeners}
     >
+      {droppableTop.isOver && <div className={styles.topBar} />}
+      {droppableBottom.isOver && <div className={styles.bottomBar} />}
+
+      <div
+        className={clsx(
+          styles.wrapper,
+          {[styles.onTopHalf]: droppableTop.isOver},
+          {[styles.onBottomHalf]: droppableBottom.isOver}
+        )}
+      >
+        <button
+          onClick={() => setSelectedElement(selectedElement ? null : element)}
+        >
+          Edit
+        </button>
+        <ConstructorElement
+          editorMode={selectedElement ? true : false}
+          elementInstance={element}
+        />
+      </div>
       <div ref={droppableTop.setNodeRef} className={styles.topArea} />
       <div ref={droppableBottom.setNodeRef} className={styles.bottomArea} />
-      {mouseIsOver && (
-        <>
-          <div className={styles.delete}>
-            <Button
-              onClick={() => removeElement({id: element.id})}
-              className={styles.deleteButton}
-            >
-              <FaRegTrashAlt className={styles.deleteIcon} />
-            </Button>
-          </div>
-
-          <div className={styles.hover}>
-            <p className={styles.hoverText}>
-              Click for properties or drag ro move
-            </p>
-          </div>
-        </>
-      )}
-      <div className={styles.wrapper}>
-        <ConstructorElement elementInstance={element} />
-      </div>
     </div>
   );
 };

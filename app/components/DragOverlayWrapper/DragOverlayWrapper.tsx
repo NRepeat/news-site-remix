@@ -5,8 +5,10 @@ import {
   BlocksType,
   PageBlocks,
 } from '../PageConstructorBlocks/PageConstructorBlocks';
-
+import useConstructor from '~/hooks/useConstructor';
+import styles from './styles.module.css';
 const DragOverlayWrapper = () => {
+  const {elements} = useConstructor();
   const [draggedElement, setDraggedElement] = useState<Active | null>(null);
   useDndMonitor({
     onDragStart: event => {
@@ -33,7 +35,17 @@ const DragOverlayWrapper = () => {
   const isConstructorElement =
     draggedElement.data?.current?.isConstructorElement;
   if (isConstructorElement) {
-    type = draggedElement.data?.current?.type as BlocksType;
+    const elementId = draggedElement?.data?.current?.elementId;
+    const element = elements?.find(el => el.id === elementId);
+    if (!element) node = <div>Element not found</div>;
+    else {
+      const ConstructorElement = PageBlocks[element.type].constructorComponent;
+      node = (
+        <div className={styles.constructorElementWrapper}>
+          <ConstructorElement editorMode={false} elementInstance={element} />
+        </div>
+      );
+    }
   }
   return <DragOverlay>{node}</DragOverlay>;
 };

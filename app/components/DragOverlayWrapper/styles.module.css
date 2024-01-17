@@ -1,0 +1,12 @@
+.constructorElementWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  height: 120px;
+  padding: 1rem;
+  background-color: rgb(79, 141, 196);
+  border-radius: 5px;
+  border: 2px solid rgb(127, 165, 198);
+  opacity: 0.6;
+  pointer-events: none;
+}

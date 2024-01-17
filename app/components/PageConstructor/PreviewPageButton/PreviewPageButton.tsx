@@ -1,10 +1,10 @@
-import {Button} from '~/ui/Button/Button';
+import {Link} from '@remix-run/react';
 
 const PreviewPageButton = () => {
   return (
-    <Button>
+    <Link to={'/constructor/preview'}>
       <span>Preview page</span>
-    </Button>
+    </Link>
   );
 };
 

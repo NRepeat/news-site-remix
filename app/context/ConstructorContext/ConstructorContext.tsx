@@ -1,8 +1,9 @@
-import React, {createContext, useState} from 'react';
+import React, {Dispatch, SetStateAction, createContext, useState} from 'react';
 import {PageBlockInstance} from '~/components/PageConstructorBlocks/PageConstructorBlocks';
 
 type PageConstructorContextType = {
   elements: PageBlockInstance[] | null;
+  setElement: React.Dispatch<React.SetStateAction<PageBlockInstance[] | null>>;
   addElement: ({
     index,
     element,
@@ -10,7 +11,16 @@ type PageConstructorContextType = {
     index: number;
     element: PageBlockInstance;
   }) => void;
+  updateElement: ({
+    id,
+    element,
+  }: {
+    id: string;
+    element: PageBlockInstance;
+  }) => void;
   removeElement: ({id}: {id: string}) => void;
+  selectedElement: PageBlockInstance | null;
+  setSelectedElement: Dispatch<SetStateAction<PageBlockInstance | null>>;
 };
 
 export const PageConstructorContext =
@@ -22,7 +32,8 @@ const ConstructorContextProvider = ({
   children: React.ReactNode;
 }) => {
   const [elements, setElement] = useState<PageBlockInstance[] | null>([]);
-
+  const [selectedElement, setSelectedElement] =
+    useState<PageBlockInstance | null>(null);
   const addElement = ({
     element,
     index,
@@ -39,7 +50,23 @@ const ConstructorContextProvider = ({
       return prev;
     });
   };
-
+  const updateElement = ({
+    id,
+    element,
+  }: {
+    id: string;
+    element: PageBlockInstance;
+  }) => {
+    setElement(prev => {
+      if (Array.isArray(prev)) {
+        const newElement = [...prev];
+        const index = newElement.findIndex(el => el.id === id);
+        newElement[index] = element;
+        return newElement;
+      }
+      return prev;
+    });
+  };
   const removeElement = ({id}: {id: string}) => {
     setElement(prev => {
       if (Array.isArray(prev)) {
@@ -51,7 +78,15 @@ const ConstructorContextProvider = ({
 
   return (
     <PageConstructorContext.Provider
-      value={{elements, addElement, removeElement}}
+      value={{
+        setElement,
+        elements,
+        addElement,
+        removeElement,
+        selectedElement,
+        setSelectedElement,
+        updateElement,
+      }}
     >
       {children}
     </PageConstructorContext.Provider>

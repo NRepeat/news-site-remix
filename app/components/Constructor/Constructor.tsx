@@ -9,13 +9,22 @@ import {
   PageBlocks,
 } from '../PageConstructorBlocks/PageConstructorBlocks';
 import styles from './styles.module.css';
+import {useEffect} from 'react';
 
 const Constructor = () => {
-  const {addElement, elements} = useConstructor();
+  const {addElement, elements, setSelectedElement, removeElement} =
+    useConstructor();
 
+  if (!elements) throw new Error('Element not found');
+  useEffect(() => {
+    // This effect will run after the initial render
+    if (Array.isArray(elements) && elements.length === 0) {
+      setSelectedElement(null);
+    }
+  }, [elements, setSelectedElement]);
   const droppable = useDroppable({
     id: 'constructor-droppable-area',
-    data: {isDroppableArea: true},
+    data: {isConstructorDroppableArea: true},
   });
   useDndMonitor({
     onDragEnd: (event: DragEndEvent) => {
@@ -23,18 +32,70 @@ const Constructor = () => {
       if (!active || !over) return null;
       const isConstructorButtonElement =
         active.data?.current?.isConstructorButtonElement;
-      if (isConstructorButtonElement) {
+      const isDroppingOverConstructorDropArea =
+        over.data.current?.isConstructorDroppableArea;
+
+      if (isConstructorButtonElement && isDroppingOverConstructorDropArea) {
         const type = active?.data?.current?.type as BlocksType;
         const newElement = PageBlocks[type].construct({id: createRandomId()});
-        addElement({index: 0, element: newElement});
+        addElement({index: elements.length, element: newElement});
         return newElement;
       }
+      const isDroppingOverConstructorElementTop =
+        over.data.current?.isTopHalfDroppable;
+      const isDroppingOverConstructorElementBottom =
+        over.data.current?.isBottomHalfDroppable;
+
+      const isDroppingOverConstructorElement =
+        isDroppingOverConstructorElementTop ||
+        isDroppingOverConstructorElementBottom;
+      const droppingOverConstructorElement =
+        isConstructorButtonElement && isDroppingOverConstructorElement;
+      if (droppingOverConstructorElement) {
+        const type = active?.data?.current?.type as BlocksType;
+        const newElement = PageBlocks[type].construct({id: createRandomId()});
+        const overId = over.data.current?.elementId;
+        const overElementIndex = elements.findIndex(el => el.id === overId);
+        if (overElementIndex === -1) throw new Error('Element not found');
+
+        let index = overElementIndex;
+
+        if (isDroppingOverConstructorElementBottom) {
+          index = overElementIndex + 1;
+        }
+        if (overElementIndex === 0) {
+          index = Math.max(0, index - 1);
+        }
+        addElement({index, element: newElement});
+        const isDraggingConstructorElement =
+          active.data.current?.isConstructorElement;
+        const draggingConstructorElementOverAnotherConstructorElement =
+          isDroppingOverConstructorElement && isDraggingConstructorElement;
+        if (draggingConstructorElementOverAnotherConstructorElement) {
+          const activeId = active.data.current?.elementId;
+          const overId = over.data.current?.elementId;
+          const activeIndex = elements.findIndex(el => el.id === activeId);
+          const overIndex = elements.findIndex(el => el.id === overId);
+          if (activeIndex === -1 || overIndex === -1)
+            throw new Error('not found');
+          const activeElement = {...elements[activeIndex]};
+          removeElement({id: activeId});
+          let index = overElementIndex;
+
+          if (isDroppingOverConstructorElementBottom) {
+            index = overElementIndex + 1;
+          }
+          addElement({index, element: activeElement});
+        }
+        return newElement;
+      }
+
       return null;
     },
   });
   return (
     <div className={clsx(styles.container)}>
-      <div className={styles.wrapper}>
+      <div aria-hidden="true" className={styles.wrapper}>
         <div
           ref={droppable.setNodeRef}
           className={clsx(styles.editor, {
@@ -45,7 +106,7 @@ const Constructor = () => {
             <p className={styles.dropText}>Drop here</p>
           )}
 
-          {droppable.isOver && (
+          {droppable.isOver && elements && elements.length === 0 && (
             <div className={styles.dropZone}>
               <div className={styles.zone}></div>
             </div>
