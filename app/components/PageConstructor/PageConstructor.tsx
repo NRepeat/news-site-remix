@@ -50,7 +50,7 @@ const PageConstructor = ({page}: {page: SerializeFrom<Page> | null}) => {
           </h2>
           <div className={styles.btnContainer}>
             <PreviewPageButton />
-            <SavePageButton />
+            <SavePageButton page={page!.slug} />
           </div>
         </nav>
         <div className={styles.constructorArea}>

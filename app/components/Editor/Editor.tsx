@@ -6,6 +6,7 @@ const Editor = ({id}: {id: string}) => {
   const {elements} = useConstructor();
 
   const editBlock = elements?.find(el => el.id === id);
+  console.log('🚀 ~ Editor ~ editBlock:', editBlock);
 
   if (!editBlock) {
     return <div>Block with ID {id} not found</div>;

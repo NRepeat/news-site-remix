@@ -4,13 +4,8 @@ import {
   PageBlock,
   PageBlockInstance,
 } from '~/components/PageConstructorBlocks/PageConstructorBlocks';
-
-import {withZod} from '@remix-validated-form/with-zod';
-import {z} from 'zod';
-
-import {Link} from '@remix-run/react';
-import Editor from '~/components/Editor/Editor';
-import {CustomElement, CustomText} from '~/components/TextEditors/custom-types';
+import styles from './styles.module.css';
+import ContentEditableForm from '~/components/ContentEditableForm/ContentEditableForm';
 
 export type TextBlockInstanceType = PageBlockInstance & {
   additionalProperties: typeof additionalProperties;
@@ -47,60 +42,28 @@ function PreviewComponent({
 }: {
   elementInstance: PageBlockInstance;
 }) {
-  return <Editor id={elementInstance.id} />;
+  let content = '<div>Not found</div>';
+  if (elementInstance.additionalProperties?.content) {
+    content = JSON.parse(
+      elementInstance.additionalProperties?.content as string
+    );
+  }
+  return <div dangerouslySetInnerHTML={{__html: content}} />;
 }
 
 function ConstructorComponent({
   elementInstance,
-  editorMode,
 }: {
   elementInstance: PageBlockInstance;
-  editorMode: boolean;
 }) {
-  const serialize = (node: CustomElement) => {
-    if (node.type === 'paragraph') {
-      const paragraphNode = node.children[0] as CustomText;
-      const text = paragraphNode.text;
-      return <p data-custom-key={text}>{text}</p>;
-    } else if (node.type === 'image') {
-      const imageUrl = node.url;
-      return <img data-custom-key={imageUrl} src={imageUrl as string} alt="" />;
-    } else {
-      return null;
-    }
-  };
-
-  let D;
-  const textElement = elementInstance as TextBlockInstanceType;
-  console.log('🚀 ~ textElement:', textElement);
-  if (textElement.additionalProperties.content) {
-    const content = JSON.parse(textElement.additionalProperties.content);
-    const renderedComponents = content.map((node: CustomElement) =>
-      serialize(node)
+  let content = '<div>Not found</div>';
+  if (elementInstance.additionalProperties?.content) {
+    content = JSON.parse(
+      elementInstance.additionalProperties?.content as string
     );
-    D = renderedComponents;
   }
-
-  return (
-    <>
-      {!editorMode && (
-        <div>
-          <h3>{textElement.additionalProperties.label}</h3>
-
-          {textElement.additionalProperties.content && <span>{D}</span>}
-        </div>
-      )}
-      {editorMode && <Editor id={elementInstance.id} />}
-    </>
-  );
+  return <div dangerouslySetInnerHTML={{__html: content}} />;
 }
-
-export const textBlockFormPropertiesValidation = withZod(
-  z.object({
-    id: z.coerce.string(),
-    label: z.string(),
-  })
-);
 
 function PropertiesComponent({
   elementInstance,
@@ -108,11 +71,11 @@ function PropertiesComponent({
   elementInstance: PageBlockInstance;
 }) {
   return (
-    <div>
-      <div>
-        <Link to={`/main/constructor/${elementInstance.id}/edit`}>Edit</Link>
-        <button>Delete</button>
+    <div className={styles.propertiesContainer}>
+      <div className={styles.textEditorWrapper}>
+        <ContentEditableForm elementInstance={elementInstance} />
       </div>
+      <button>Delete</button>
     </div>
   );
 }

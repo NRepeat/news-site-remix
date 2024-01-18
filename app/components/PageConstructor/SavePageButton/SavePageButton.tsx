@@ -1,17 +1,18 @@
 import {useSubmit} from '@remix-run/react';
-import useConstructor from '~/hooks/useConstructor';
+import {useContext} from 'react';
+import {PageConstructorContext} from '~/context/ConstructorContext/ConstructorContext';
 import {Button} from '~/ui/Button/Button';
 
-const SavePageButton = () => {
+const SavePageButton = ({page}: {page: string}) => {
   const submit = useSubmit();
-  const {elements} = useConstructor();
-  console.log('🚀 ~ SavePageButton ~  elements:', elements);
+  const context = useContext(PageConstructorContext);
+  if (!context) throw new Error();
+  const {elements} = context;
   const handleSavePage = () => {
     const stringifyElements = JSON.stringify(elements);
-    console.log('🚀 ~ handleSavePage ~ stringifyElements:', stringifyElements);
     submit(
       {stringifyElements: stringifyElements},
-      {action: '/constructor', method: 'PUT'}
+      {action: `/${page}/constructor`, method: 'PUT'}
     );
   };
   return (

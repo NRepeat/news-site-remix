@@ -6,7 +6,9 @@ import {getPage, updatePage} from '~/service/page.server';
 export async function action({request}: ActionFunctionArgs) {
   try {
     const formData = await request.formData();
-    const stringifyElements = formData.get('elements');
+    console.log('🚀 ~ action ~ formDatsa:', formData);
+    const stringifyElements = formData.get('stringifyElements');
+    console.log('🚀 ~ action ~  stringifyElements:', stringifyElements);
     if (!stringifyElements) {
       throw new Error('Bad request');
     }

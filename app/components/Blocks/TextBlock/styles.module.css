@@ -3,3 +3,13 @@
   border-radius: 5px;
   border: 2px solid rgb(127, 165, 198);
 }
+
+.propertiesContainer {
+  width: 500px;
+  display: flex;
+  gap: 2rem;
+}
+
+.textEditorWrapper {
+  border-right: 2px solid rgb(127, 165, 198);
+}

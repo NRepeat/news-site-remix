@@ -59,10 +59,10 @@ const ConstructorContextProvider = ({
   }) => {
     setElement(prev => {
       if (Array.isArray(prev)) {
-        const newElement = [...prev];
-        const index = newElement.findIndex(el => el.id === id);
-        newElement[index] = element;
-        return newElement;
+        const newElements = prev.map(el => {
+          return el.id === id ? {...el, ...element} : el;
+        });
+        return newElements;
       }
       return prev;
     });

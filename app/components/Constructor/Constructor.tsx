@@ -17,7 +17,6 @@ const Constructor = () => {
 
   if (!elements) throw new Error('Element not found');
   useEffect(() => {
-    // This effect will run after the initial render
     if (Array.isArray(elements) && elements.length === 0) {
       setSelectedElement(null);
     }
@@ -34,13 +33,6 @@ const Constructor = () => {
         active.data?.current?.isConstructorButtonElement;
       const isDroppingOverConstructorDropArea =
         over.data.current?.isConstructorDroppableArea;
-
-      if (isConstructorButtonElement && isDroppingOverConstructorDropArea) {
-        const type = active?.data?.current?.type as BlocksType;
-        const newElement = PageBlocks[type].construct({id: createRandomId()});
-        addElement({index: elements.length, element: newElement});
-        return newElement;
-      }
       const isDroppingOverConstructorElementTop =
         over.data.current?.isTopHalfDroppable;
       const isDroppingOverConstructorElementBottom =
@@ -51,6 +43,19 @@ const Constructor = () => {
         isDroppingOverConstructorElementBottom;
       const droppingOverConstructorElement =
         isConstructorButtonElement && isDroppingOverConstructorElement;
+      const isDraggingConstructorElement =
+        active.data.current?.isConstructorElement;
+
+      const draggingConstructorElementOverAnotherConstructorElement =
+        isDroppingOverConstructorElement && isDraggingConstructorElement;
+
+      if (isConstructorButtonElement && isDroppingOverConstructorDropArea) {
+        const type = active?.data?.current?.type as BlocksType;
+        const newElement = PageBlocks[type].construct({id: createRandomId()});
+        addElement({index: elements.length, element: newElement});
+        return newElement;
+      }
+
       if (droppingOverConstructorElement) {
         const type = active?.data?.current?.type as BlocksType;
         const newElement = PageBlocks[type].construct({id: createRandomId()});
@@ -67,29 +72,25 @@ const Constructor = () => {
           index = Math.max(0, index - 1);
         }
         addElement({index, element: newElement});
-        const isDraggingConstructorElement =
-          active.data.current?.isConstructorElement;
-        const draggingConstructorElementOverAnotherConstructorElement =
-          isDroppingOverConstructorElement && isDraggingConstructorElement;
-        if (draggingConstructorElementOverAnotherConstructorElement) {
-          const activeId = active.data.current?.elementId;
-          const overId = over.data.current?.elementId;
-          const activeIndex = elements.findIndex(el => el.id === activeId);
-          const overIndex = elements.findIndex(el => el.id === overId);
-          if (activeIndex === -1 || overIndex === -1)
-            throw new Error('not found');
-          const activeElement = {...elements[activeIndex]};
-          removeElement({id: activeId});
-          let index = overElementIndex;
-
-          if (isDroppingOverConstructorElementBottom) {
-            index = overElementIndex + 1;
-          }
-          addElement({index, element: activeElement});
-        }
-        return newElement;
       }
+      if (draggingConstructorElementOverAnotherConstructorElement) {
+        const activeId = active.data.current?.elementId;
+        const overId = over.data.current?.elementId;
+        const overElementIndex = elements.findIndex(el => el.id === overId);
 
+        const activeIndex = elements.findIndex(el => el.id === activeId);
+        const overIndex = elements.findIndex(el => el.id === overId);
+        if (activeIndex === -1 || overIndex === -1)
+          throw new Error('not found');
+        const activeElement = {...elements[activeIndex]};
+        removeElement({id: activeId});
+        let index = overElementIndex;
+
+        if (isDroppingOverConstructorElementBottom) {
+          index = overElementIndex + 1;
+        }
+        addElement({index, element: activeElement});
+      }
       return null;
     },
   });

@@ -31,14 +31,16 @@ const TextEditor = ({element}: {element: TextBlockInstanceType}) => {
       <Button
         onClick={() => {
           const content = JSON.stringify(editorContent);
-          element.additionalProperties.content = content;
-          const newElement = {...element};
-          updateElement({id: element.id, element: newElement});
+          const updatedElement = {
+            ...element,
+            additionalProperties: {...element.additionalProperties, content},
+          };
+          updateElement({id: updatedElement.id, element: updatedElement});
         }}
       >
         Save
       </Button>
-      <Editable placeholder="Enter some text..." />
+      <Editable style={{width: '500px'}} placeholder="Enter some text..." />
     </Slate>
   );
 };
