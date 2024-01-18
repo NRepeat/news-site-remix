@@ -32,6 +32,14 @@ const PageConstructor = ({page}: {page: SerializeFrom<Page> | null}) => {
 
   useEffect(() => {
     if (!page) throw new Error('Bad request');
+    if (window.localStorage.getItem('content')) {
+      const el = window.localStorage.getItem('content');
+      if (el) {
+        const els = JSON.parse(el);
+        setElement(els);
+        return;
+      }
+    }
     if (!page.content) {
       setElement([]);
       return;

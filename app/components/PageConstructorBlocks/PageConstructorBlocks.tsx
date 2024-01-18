@@ -1,8 +1,9 @@
 import React from 'react';
 import {IconType} from 'react-icons';
 import {TextBlock} from '../Blocks/TextBlock/TextBlock';
+import {ImageBlock} from '../Blocks/ImageBlock/ImageBlock';
 
-export type BlocksType = 'TextBlock';
+export type BlocksType = 'TextBlock' | 'ImageBlock';
 export type PageBlockInstance = {
   id: string;
   type: BlocksType;
@@ -29,4 +30,5 @@ export type PageBlocksType = {
 
 export const PageBlocks: PageBlocksType = {
   TextBlock: TextBlock,
+  ImageBlock: ImageBlock,
 };

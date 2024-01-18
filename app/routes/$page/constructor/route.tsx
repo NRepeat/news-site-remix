@@ -1,14 +1,15 @@
 import PageConstructor from '~/components/PageConstructor/PageConstructor';
 
-import type {ActionFunctionArgs, LoaderFunctionArgs} from '@remix-run/node';
+import {
+  type ActionFunctionArgs,
+  type LoaderFunctionArgs,
+} from '@remix-run/node';
 import {Outlet, json, useLoaderData} from '@remix-run/react';
 import {getPage, updatePage} from '~/service/page.server';
 export async function action({request}: ActionFunctionArgs) {
   try {
     const formData = await request.formData();
-    console.log('🚀 ~ action ~ formDatsa:', formData);
     const stringifyElements = formData.get('stringifyElements');
-    console.log('🚀 ~ action ~  stringifyElements:', stringifyElements);
     if (!stringifyElements) {
       throw new Error('Bad request');
     }

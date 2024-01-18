@@ -40,7 +40,6 @@ export default function App() {
         <ConstructorContextProvider>
           <Outlet />
         </ConstructorContextProvider>
-
         <ScrollRestoration />
         <Scripts />
         <LiveReload />

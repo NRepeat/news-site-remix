@@ -10,6 +10,7 @@ const SavePageButton = ({page}: {page: string}) => {
   const {elements} = context;
   const handleSavePage = () => {
     const stringifyElements = JSON.stringify(elements);
+    window.localStorage.clear();
     submit(
       {stringifyElements: stringifyElements},
       {action: `/${page}/constructor`, method: 'PUT'}

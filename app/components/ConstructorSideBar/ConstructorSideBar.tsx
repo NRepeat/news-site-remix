@@ -9,7 +9,10 @@ const ConstructorSideBar = () => {
   return (
     <aside className={styles.sideBar}>
       {!selectedElement && (
-        <ConstructorSideBarButton pageBlock={PageBlocks.TextBlock} />
+        <>
+          <ConstructorSideBarButton pageBlock={PageBlocks.ImageBlock} />
+          <ConstructorSideBarButton pageBlock={PageBlocks.TextBlock} />
+        </>
       )}
       {selectedElement && <SidebarElementsProperties />}
     </aside>
