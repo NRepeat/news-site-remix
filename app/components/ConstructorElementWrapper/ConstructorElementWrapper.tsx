@@ -1,5 +1,4 @@
 import {useDraggable, useDroppable} from '@dnd-kit/core';
-import {useContext} from 'react';
 
 import {
   PageBlockInstance,
@@ -7,9 +6,14 @@ import {
 } from '../PageConstructorBlocks/PageConstructorBlocks';
 import styles from './styles.module.css';
 import clsx from 'clsx';
-import {PageConstructorContext} from '~/context/ConstructorContext/ConstructorContext';
 
-const ConstructorElementWrapper = ({element}: {element: PageBlockInstance}) => {
+const ConstructorElementWrapper = ({
+  element,
+  page,
+}: {
+  page: string;
+  element: PageBlockInstance;
+}) => {
   const draggable = useDraggable({
     id: element.id + 'constructor-element-drag-handler',
     data: {
@@ -18,13 +22,6 @@ const ConstructorElementWrapper = ({element}: {element: PageBlockInstance}) => {
       isConstructorElement: true,
     },
   });
-  const context = useContext(PageConstructorContext);
-
-  if (!context) {
-    throw new Error('Not constructor context');
-  }
-
-  const {setSelectedElement, selectedElement} = context;
 
   const droppableTop = useDroppable({
     id: element.id + '-top',
@@ -44,7 +41,7 @@ const ConstructorElementWrapper = ({element}: {element: PageBlockInstance}) => {
   });
   if (draggable.isDragging) return null;
   const ConstructorElement = PageBlocks[element.type].constructorComponent;
-
+  draggable.attributes['aria-describedby'] = element.type;
   return (
     <div
       ref={draggable.setNodeRef}
@@ -62,15 +59,7 @@ const ConstructorElementWrapper = ({element}: {element: PageBlockInstance}) => {
           {[styles.onBottomHalf]: droppableBottom.isOver}
         )}
       >
-        <button
-          onClick={() => setSelectedElement(selectedElement ? null : element)}
-        >
-          Edit
-        </button>
-        <ConstructorElement
-          editorMode={selectedElement ? true : false}
-          elementInstance={element}
-        />
+        <ConstructorElement page={page} elementInstance={element} />
       </div>
       <div ref={droppableTop.setNodeRef} className={styles.topArea} />
       <div ref={droppableBottom.setNodeRef} className={styles.bottomArea} />

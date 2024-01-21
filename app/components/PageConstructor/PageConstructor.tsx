@@ -10,13 +10,10 @@ import DragOverlayWrapper from '../DragOverlayWrapper/DragOverlayWrapper';
 import PreviewPageButton from './PreviewPageButton/PreviewPageButton';
 import SavePageButton from './SavePageButton/SavePageButton';
 import styles from './styles.module.css';
-import {useEffect} from 'react';
-import useConstructor from '~/hooks/useConstructor';
 import {Page} from '@prisma/client';
 import {SerializeFrom} from '@remix-run/node';
 
-const PageConstructor = ({page}: {page: SerializeFrom<Page> | null}) => {
-  const {setElement} = useConstructor();
+const PageConstructor = ({page}: {page: SerializeFrom<Page>}) => {
   const mouseSensor = useSensor(MouseSensor, {
     activationConstraint: {
       distance: 10,
@@ -30,28 +27,9 @@ const PageConstructor = ({page}: {page: SerializeFrom<Page> | null}) => {
   });
   const sensors = useSensors(mouseSensor, touchSensor);
 
-  useEffect(() => {
-    if (!page) throw new Error('Bad request');
-    if (window.localStorage.getItem('content')) {
-      const el = window.localStorage.getItem('content');
-      if (el) {
-        const els = JSON.parse(el);
-        setElement(els);
-        return;
-      }
-    }
-    if (!page.content) {
-      setElement([]);
-      return;
-    }
-
-    const elements = JSON.parse(page.content);
-    setElement(elements);
-  }, [page, setElement]);
-
   return (
     <DndContext sensors={sensors}>
-      <main className={styles.main}>
+      <div className={styles.main}>
         <nav className={styles.pageNameContainer}>
           <h2 className={styles.pageName}>
             <span>Page:{page?.name}</span>
@@ -61,11 +39,9 @@ const PageConstructor = ({page}: {page: SerializeFrom<Page> | null}) => {
             <SavePageButton page={page!.slug} />
           </div>
         </nav>
-        <div className={styles.constructorArea}>
-          <Constructor />
-        </div>
-      </main>
-      <DragOverlayWrapper />
+        <Constructor page={page} />
+      </div>
+      <DragOverlayWrapper page={page} />
     </DndContext>
   );
 };

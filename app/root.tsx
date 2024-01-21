@@ -9,11 +9,12 @@ import {
   ScrollRestoration,
   json,
 } from '@remix-run/react';
-import ConstructorContextProvider from './context/ConstructorContext/ConstructorContext';
 import globalStylesHref from './styles/global.css';
 import resetStylesHref from './styles/reset.css';
+import fontsStylesHref from './styles/fonts.css';
 
 export const links: LinksFunction = () => [
+  {rel: 'stylesheet', href: fontsStylesHref},
   {rel: 'stylesheet', href: resetStylesHref},
   {rel: 'stylesheet', href: globalStylesHref},
   ...(cssBundleHref ? [{rel: 'stylesheet', href: cssBundleHref}] : []),
@@ -37,9 +38,7 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <ConstructorContextProvider>
-          <Outlet />
-        </ConstructorContextProvider>
+        <Outlet />
         <ScrollRestoration />
         <Scripts />
         <LiveReload />

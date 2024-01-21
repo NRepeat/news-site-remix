@@ -5,7 +5,8 @@ import {
   PageBlockInstance,
 } from '~/components/PageConstructorBlocks/PageConstructorBlocks';
 import styles from './styles.module.css';
-import ContentEditableForm from '~/components/ContentEditableForm/ContentEditableForm';
+
+import {Link} from '@remix-run/react';
 
 export type TextBlockInstanceType = PageBlockInstance & {
   additionalProperties: typeof additionalProperties;
@@ -44,6 +45,10 @@ function PreviewComponent({
 }) {
   let content = '<div>Not found</div>';
   if (elementInstance.additionalProperties?.content) {
+    console.log(
+      '🚀 ~ elementInstance.additionalProperties?.content:',
+      elementInstance.additionalProperties?.content
+    );
     content = JSON.parse(
       elementInstance.additionalProperties?.content as string
     );
@@ -53,16 +58,26 @@ function PreviewComponent({
 
 function ConstructorComponent({
   elementInstance,
+  page,
 }: {
   elementInstance: PageBlockInstance;
+  page: string;
 }) {
   let content = '<div>Not found</div>';
+
   if (elementInstance.additionalProperties?.content) {
     content = JSON.parse(
       elementInstance.additionalProperties?.content as string
     );
   }
-  return <div dangerouslySetInnerHTML={{__html: content}} />;
+  return (
+    <div>
+      <Link to={`/admin/${page}/constructor/${elementInstance.id}/edit`}>
+        Edit content
+      </Link>
+      <div dangerouslySetInnerHTML={{__html: content}} />
+    </div>
+  );
 }
 
 function PropertiesComponent({
@@ -70,10 +85,11 @@ function PropertiesComponent({
 }: {
   elementInstance: PageBlockInstance;
 }) {
+  console.log('🚀 ~ elementInstance:', elementInstance);
   return (
     <div className={styles.propertiesContainer}>
       <div className={styles.textEditorWrapper}>
-        <ContentEditableForm elementInstance={elementInstance} />
+        {/* <ContentEditableForm elementInstance={elementInstance} /> */}
       </div>
       <button>Delete</button>
     </div>

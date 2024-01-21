@@ -1,0 +1,48 @@
+.container {
+  display: inline-flex;
+  height: 3rem;
+  justify-content: space-between;
+  background-color: black;
+  align-items: center;
+  padding-right: 2rem;
+  padding-left: 2rem;
+}
+
+.links {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  height: 100%;
+}
+
+.link {
+  font-family: Barlow, sans-serif;
+  display: inline-flex;
+  align-items: center;
+  height: 100%;
+  color: rgb(211, 211, 211);
+  text-decoration: none;
+  font-size: 1.2rem;
+  position: relative;
+}
+
+.link:hover {
+  color: cadetblue;
+}
+
+.link:hover::after {
+  position: absolute;
+  content: '';
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background-color: rgb(123, 204, 207);
+}
+
+.account {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  height: 100%;
+}

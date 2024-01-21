@@ -1,6 +1,5 @@
 import {Descendant, BaseEditor, BaseRange, Range, Element} from 'slate';
 import {ReactEditor} from 'slate-react';
-import {HistoryEditor} from 'slate-history';
 
 export type BlockQuoteElement = {
   type: 'block-quote';

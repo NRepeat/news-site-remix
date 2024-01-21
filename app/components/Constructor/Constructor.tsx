@@ -1,102 +1,69 @@
-import {DragEndEvent, useDndMonitor, useDroppable} from '@dnd-kit/core';
+import {useDndMonitor, useDroppable} from '@dnd-kit/core';
 import clsx from 'clsx';
-import useConstructor from '~/hooks/useConstructor';
-import {createRandomId} from '~/utils/randomId';
 import ConstructorElementWrapper from '../ConstructorElementWrapper/ConstructorElementWrapper';
-import ConstructorSideBar from '../ConstructorSideBar/ConstructorSideBar';
-import {
-  BlocksType,
-  PageBlocks,
-} from '../PageConstructorBlocks/PageConstructorBlocks';
+import {PageBlockInstance} from '../PageConstructorBlocks/PageConstructorBlocks';
 import styles from './styles.module.css';
-import {useEffect} from 'react';
+import {FC} from 'react';
+import Sidebar from '../Admin/Sidebar/Sidebar';
+import {useSubmit} from '@remix-run/react';
+import {SerializeFrom} from '@remix-run/node';
+import {Page} from '@prisma/client';
+import {onDragEndHandler} from './Handlers/onDragEnd';
 
-const Constructor = () => {
-  const {addElement, elements, setSelectedElement, removeElement} =
-    useConstructor();
+type ConstructorProps = {
+  page: SerializeFrom<Page>;
+};
 
-  if (!elements) throw new Error('Element not found');
-  useEffect(() => {
-    if (Array.isArray(elements) && elements.length === 0) {
-      setSelectedElement(null);
-    }
-  }, [elements, setSelectedElement]);
+const Constructor: FC<ConstructorProps> = ({page}) => {
+  let content;
+  let elements: PageBlockInstance[] = [];
+  if (page?.content) content = JSON.parse(page.content);
+  if (content) elements = content;
+  const sub = useSubmit();
+
+  const addElement = ({
+    index,
+    newElement,
+  }: {
+    index: number;
+    newElement: PageBlockInstance;
+  }) => {
+    const type = 'addElement';
+    const serializedNewElement = JSON.stringify(newElement);
+    sub(
+      {index, newElement: serializedNewElement, type},
+      {
+        action: `/admin/${page?.slug}/constructor`,
+        method: 'POST',
+        navigate: false,
+      }
+    );
+  };
+  const removeElement = ({id}: {id: string}) => {
+    const type = 'removeElement';
+    sub(
+      {id, type},
+      {
+        action: `/admin/${page?.slug}/constructor`,
+        method: 'POST',
+        navigate: false,
+      }
+    );
+  };
+
   const droppable = useDroppable({
     id: 'constructor-droppable-area',
     data: {isConstructorDroppableArea: true},
   });
   useDndMonitor({
-    onDragEnd: (event: DragEndEvent) => {
-      const {active, over} = event;
-      if (!active || !over) return null;
-      const isConstructorButtonElement =
-        active.data?.current?.isConstructorButtonElement;
-      const isDroppingOverConstructorDropArea =
-        over.data.current?.isConstructorDroppableArea;
-      const isDroppingOverConstructorElementTop =
-        over.data.current?.isTopHalfDroppable;
-      const isDroppingOverConstructorElementBottom =
-        over.data.current?.isBottomHalfDroppable;
-
-      const isDroppingOverConstructorElement =
-        isDroppingOverConstructorElementTop ||
-        isDroppingOverConstructorElementBottom;
-      const droppingOverConstructorElement =
-        isConstructorButtonElement && isDroppingOverConstructorElement;
-      const isDraggingConstructorElement =
-        active.data.current?.isConstructorElement;
-
-      const draggingConstructorElementOverAnotherConstructorElement =
-        isDroppingOverConstructorElement && isDraggingConstructorElement;
-
-      if (isConstructorButtonElement && isDroppingOverConstructorDropArea) {
-        const type = active?.data?.current?.type as BlocksType;
-        const newElement = PageBlocks[type].construct({id: createRandomId()});
-        addElement({index: elements.length, element: newElement});
-        return newElement;
-      }
-
-      if (droppingOverConstructorElement) {
-        const type = active?.data?.current?.type as BlocksType;
-        const newElement = PageBlocks[type].construct({id: createRandomId()});
-        const overId = over.data.current?.elementId;
-        const overElementIndex = elements.findIndex(el => el.id === overId);
-        if (overElementIndex === -1) throw new Error('Element not found');
-
-        let index = overElementIndex;
-
-        if (isDroppingOverConstructorElementBottom) {
-          index = overElementIndex + 1;
-        }
-        if (overElementIndex === 0) {
-          index = Math.max(0, index - 1);
-        }
-        addElement({index, element: newElement});
-      }
-      if (draggingConstructorElementOverAnotherConstructorElement) {
-        const activeId = active.data.current?.elementId;
-        const overId = over.data.current?.elementId;
-        const overElementIndex = elements.findIndex(el => el.id === overId);
-
-        const activeIndex = elements.findIndex(el => el.id === activeId);
-        const overIndex = elements.findIndex(el => el.id === overId);
-        if (activeIndex === -1 || overIndex === -1)
-          throw new Error('not found');
-        const activeElement = {...elements[activeIndex]};
-        removeElement({id: activeId});
-        let index = overElementIndex;
-
-        if (isDroppingOverConstructorElementBottom) {
-          index = overElementIndex + 1;
-        }
-        addElement({index, element: activeElement});
-      }
-      return null;
-    },
+    onDragEnd: e =>
+      onDragEndHandler({event: e, addElement, elements, removeElement}),
   });
   return (
-    <div className={clsx(styles.container)}>
-      <div aria-hidden="true" className={styles.wrapper}>
+    <div>
+      <Sidebar type="constructor" />
+
+      <div>
         <div
           ref={droppable.setNodeRef}
           className={clsx(styles.editor, {
@@ -109,17 +76,20 @@ const Constructor = () => {
 
           {droppable.isOver && elements && elements.length === 0 && (
             <div className={styles.dropZone}>
-              <div className={styles.zone}></div>
+              <div className={styles.zone} />
             </div>
           )}
           {elements &&
             elements.length > 0 &&
-            elements.map(element => (
-              <ConstructorElementWrapper key={element.id} element={element} />
+            elements.map(el => (
+              <ConstructorElementWrapper
+                page={page.slug}
+                key={el.id}
+                element={el}
+              />
             ))}
         </div>
       </div>
-      <ConstructorSideBar />
     </div>
   );
 };

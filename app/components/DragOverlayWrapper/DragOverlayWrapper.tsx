@@ -1,14 +1,18 @@
 import {Active, DragOverlay, useDndMonitor} from '@dnd-kit/core';
 import {useState} from 'react';
-import {ConstructorSidebarButtonDraggableOverlay} from '../ConstructorSideBar/Button/Button';
+
 import {
   BlocksType,
+  PageBlockInstance,
   PageBlocks,
 } from '../PageConstructorBlocks/PageConstructorBlocks';
-import useConstructor from '~/hooks/useConstructor';
 import styles from './styles.module.css';
-const DragOverlayWrapper = () => {
-  const {elements} = useConstructor();
+import {ConstructorSidebarButtonDraggableOverlay} from '../Admin/Sidebar/ConstructorSidebarButton/ConstructorSidebarButton';
+import {Page} from '@prisma/client';
+import {SerializeFrom} from '@remix-run/node';
+const DragOverlayWrapper = ({page}: {page: SerializeFrom<Page>}) => {
+  let elements: PageBlockInstance[] = [];
+  if (page.content) elements = JSON.parse(page.content);
   const [draggedElement, setDraggedElement] = useState<Active | null>(null);
   useDndMonitor({
     onDragStart: event => {
@@ -42,7 +46,7 @@ const DragOverlayWrapper = () => {
       const ConstructorElement = PageBlocks[element.type].constructorComponent;
       node = (
         <div className={styles.constructorElementWrapper}>
-          <ConstructorElement editorMode={false} elementInstance={element} />
+          <ConstructorElement page={page.slug} elementInstance={element} />
         </div>
       );
     }
