@@ -16,14 +16,12 @@ type onDragEndArgs = {
     index: number;
     newElement: PageBlockInstance;
   }) => void;
-  removeElement: ({id}: {id: string}) => void;
 };
 
 export const onDragEndHandler = ({
   event,
   elements,
   addElement,
-  removeElement,
 }: onDragEndArgs) => {
   const {active, over} = event;
   if (!active || !over) return null;
@@ -82,7 +80,6 @@ export const onDragEndHandler = ({
 
     const activeElement = {...elements[activeIndex]};
     let index = overElementIndex;
-    removeElement({id: activeElement.id});
     if (isDroppingOverConstructorElementBottom) {
       index = overElementIndex + 1;
     }

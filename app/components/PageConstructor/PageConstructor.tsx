@@ -31,9 +31,7 @@ const PageConstructor = ({page}: {page: SerializeFrom<Page>}) => {
     <DndContext sensors={sensors}>
       <div className={styles.main}>
         <nav className={styles.pageNameContainer}>
-          <h2 className={styles.pageName}>
-            <span>Page:{page?.name}</span>
-          </h2>
+          <h2 className={styles.pageName}>Page: {page.name}</h2>
           <div className={styles.btnContainer}>
             <PreviewPageButton />
             <SavePageButton page={page!.slug} />

@@ -4,11 +4,11 @@ import ConstructorElementWrapper from '../ConstructorElementWrapper/ConstructorE
 import {PageBlockInstance} from '../PageConstructorBlocks/PageConstructorBlocks';
 import styles from './styles.module.css';
 import {FC} from 'react';
-import Sidebar from '../Admin/Sidebar/Sidebar';
 import {useSubmit} from '@remix-run/react';
 import {SerializeFrom} from '@remix-run/node';
 import {Page} from '@prisma/client';
 import {onDragEndHandler} from './Handlers/onDragEnd';
+import Sidebar from '../Admin/Sidebar/Sidebar';
 
 type ConstructorProps = {
   page: SerializeFrom<Page>;
@@ -39,58 +39,51 @@ const Constructor: FC<ConstructorProps> = ({page}) => {
       }
     );
   };
-  const removeElement = ({id}: {id: string}) => {
-    const type = 'removeElement';
-    sub(
-      {id, type},
-      {
-        action: `/admin/${page?.slug}/constructor`,
-        method: 'POST',
-        navigate: false,
-      }
-    );
-  };
+  // const removeElement = ({id}: {id: string}) => {
+  //   const type = 'removeElement';
+  //   sub(
+  //     {id, type},
+  //     {
+  //       action: `/admin/${page?.slug}/constructor`,
+  //       method: 'POST',
+  //       navigate: false,
+  //     }
+  //   );
+  // };
 
   const droppable = useDroppable({
     id: 'constructor-droppable-area',
     data: {isConstructorDroppableArea: true},
   });
   useDndMonitor({
-    onDragEnd: e =>
-      onDragEndHandler({event: e, addElement, elements, removeElement}),
+    onDragEnd: e => onDragEndHandler({event: e, addElement, elements}),
   });
   return (
-    <div>
+    <>
       <Sidebar type="constructor" />
 
-      <div>
-        <div
-          ref={droppable.setNodeRef}
-          className={clsx(styles.editor, {
-            [styles.dropOverlay]: droppable.isOver,
-          })}
-        >
-          {!droppable.isOver && elements && elements.length === 0 && (
-            <p className={styles.dropText}>Drop here</p>
-          )}
+      <div
+        ref={droppable.setNodeRef}
+        className={clsx(styles.editor, {
+          [styles.dropOverlay]: droppable.isOver,
+        })}
+      >
+        {!droppable.isOver && elements && elements.length === 0 && (
+          <p className={styles.dropText}>Drop here</p>
+        )}
 
-          {droppable.isOver && elements && elements.length === 0 && (
-            <div className={styles.dropZone}>
-              <div className={styles.zone} />
-            </div>
-          )}
-          {elements &&
-            elements.length > 0 &&
-            elements.map(el => (
-              <ConstructorElementWrapper
-                page={page.slug}
-                key={el.id}
-                element={el}
-              />
-            ))}
-        </div>
+        {droppable.isOver && elements && elements.length === 0 && (
+          <div className={styles.dropZone}>
+            <div className={styles.zone} />
+          </div>
+        )}
+        {elements &&
+          elements.length > 0 &&
+          elements.map(el => (
+            <ConstructorElementWrapper page={page} key={el.id} element={el} />
+          ))}
       </div>
-    </div>
+    </>
   );
 };
 

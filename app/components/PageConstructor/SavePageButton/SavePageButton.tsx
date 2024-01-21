@@ -1,5 +1,5 @@
 import {Button} from '~/ui/Button/Button';
-
+import styles from './styles.module.css';
 const SavePageButton = ({page}: {page: string}) => {
   console.log('🚀 ~ SavePageButton ~  page:', page);
   const handleSavePage = () => {
@@ -10,7 +10,7 @@ const SavePageButton = ({page}: {page: string}) => {
     // );
   };
   return (
-    <Button onClick={handleSavePage}>
+    <Button className={styles.button} onClick={handleSavePage}>
       <span>Save page</span>
     </Button>
   );

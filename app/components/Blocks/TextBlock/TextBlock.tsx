@@ -4,9 +4,12 @@ import {
   PageBlock,
   PageBlockInstance,
 } from '~/components/PageConstructorBlocks/PageConstructorBlocks';
-import styles from './styles.module.css';
+// import styles from './styles.module.css';
 
 import {Link} from '@remix-run/react';
+import PropertiesComponent from './PropertiesComponent/PropertiesComponent';
+import {Page} from '@prisma/client';
+import {SerializeFrom} from '@remix-run/node';
 
 export type TextBlockInstanceType = PageBlockInstance & {
   additionalProperties: typeof additionalProperties;
@@ -45,10 +48,6 @@ function PreviewComponent({
 }) {
   let content = '<div>Not found</div>';
   if (elementInstance.additionalProperties?.content) {
-    console.log(
-      '🚀 ~ elementInstance.additionalProperties?.content:',
-      elementInstance.additionalProperties?.content
-    );
     content = JSON.parse(
       elementInstance.additionalProperties?.content as string
     );
@@ -61,37 +60,46 @@ function ConstructorComponent({
   page,
 }: {
   elementInstance: PageBlockInstance;
-  page: string;
+  page?: SerializeFrom<Page>;
 }) {
-  let content = '<div>Not found</div>';
+  let defaultContent: TextElementContentType = {
+    content: '<div>Not found</div>',
+    styles: {},
+  };
 
   if (elementInstance.additionalProperties?.content) {
-    content = JSON.parse(
+    const parsedContent: TextElementContentType = JSON.parse(
       elementInstance.additionalProperties?.content as string
     );
+
+    if (parsedContent) {
+      defaultContent = parsedContent;
+    }
   }
+
+  const contentStyles: React.CSSProperties =
+    typeof defaultContent.styles === 'string' ? {} : defaultContent.styles;
+
   return (
     <div>
-      <Link to={`/admin/${page}/constructor/${elementInstance.id}/edit`}>
+      <Link
+        prefetch="render"
+        reloadDocument={true}
+        to={`/admin/${page?.slug}/constructor/${elementInstance.id}/edit`}
+      >
         Edit content
       </Link>
-      <div dangerouslySetInnerHTML={{__html: content}} />
+      {defaultContent && (
+        <div
+          style={contentStyles}
+          dangerouslySetInnerHTML={{__html: defaultContent.content}}
+        />
+      )}
     </div>
   );
 }
 
-function PropertiesComponent({
-  elementInstance,
-}: {
-  elementInstance: PageBlockInstance;
-}) {
-  console.log('🚀 ~ elementInstance:', elementInstance);
-  return (
-    <div className={styles.propertiesContainer}>
-      <div className={styles.textEditorWrapper}>
-        {/* <ContentEditableForm elementInstance={elementInstance} /> */}
-      </div>
-      <button>Delete</button>
-    </div>
-  );
-}
+type TextElementContentType = {
+  content: string;
+  styles: string | React.CSSProperties;
+};

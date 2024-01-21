@@ -46,7 +46,7 @@ const DragOverlayWrapper = ({page}: {page: SerializeFrom<Page>}) => {
       const ConstructorElement = PageBlocks[element.type].constructorComponent;
       node = (
         <div className={styles.constructorElementWrapper}>
-          <ConstructorElement page={page.slug} elementInstance={element} />
+          <ConstructorElement page={page} elementInstance={element} />
         </div>
       );
     }

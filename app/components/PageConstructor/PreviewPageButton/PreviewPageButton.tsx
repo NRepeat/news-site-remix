@@ -1,8 +1,8 @@
 import {Link} from '@remix-run/react';
-
+import styles from './styles.module.css';
 const PreviewPageButton = () => {
   return (
-    <Link to={'/constructor/preview'}>
+    <Link className={styles.link} to={'/constructor/preview'}>
       <span>Preview page</span>
     </Link>
   );

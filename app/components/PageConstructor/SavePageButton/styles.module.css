@@ -1,0 +1,18 @@
+.button:hover {
+  color: rgb(255, 255, 255);
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgb(0, 0, 0);
+  color: black;
+  background-color: cadetblue;
+  font-size: 1.2rem;
+  font-family: 'Barlow', sans-serif;
+  transition: all 0.1s;
+}
+
+.button > span {
+  padding: 0.2rem;
+}

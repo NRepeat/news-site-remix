@@ -12,9 +12,8 @@ type ConstructorLayoutProps = {
 const ConstructorLayout: FC<ConstructorLayoutProps> = ({children, page}) => {
   return (
     <main className={styles.container}>
-      {' '}
       <PageConstructor page={page} />
-      {children}{' '}
+      {children}
     </main>
   );
 };

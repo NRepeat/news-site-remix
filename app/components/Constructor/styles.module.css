@@ -1,10 +1,11 @@
-.container {
-}
-
-.wrapper {
-}
-
 .editor {
+  padding: 1rem;
+  grid-area: main;
+  border: 1px solid black;
+  transition: all 0.1s;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .dropText {
@@ -18,7 +19,7 @@
 }
 
 .dropOverlay {
-  border: 2px solid rgb(127, 165, 198);
+  border: 1px solid cadetblue;
 }
 
 .dropZone {
@@ -27,7 +28,7 @@
 }
 
 .zone {
-  border-radius: 5px;
+  border-radius: 1px;
   height: 120px;
-  background-color: rgb(127, 165, 198);
+  border: 1px solid black;
 }

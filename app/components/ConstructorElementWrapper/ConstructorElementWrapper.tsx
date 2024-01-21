@@ -6,12 +6,14 @@ import {
 } from '../PageConstructorBlocks/PageConstructorBlocks';
 import styles from './styles.module.css';
 import clsx from 'clsx';
+import {Page} from '@prisma/client';
+import {SerializeFrom} from '@remix-run/node';
 
 const ConstructorElementWrapper = ({
   element,
   page,
 }: {
-  page: string;
+  page: SerializeFrom<Page>;
   element: PageBlockInstance;
 }) => {
   const draggable = useDraggable({

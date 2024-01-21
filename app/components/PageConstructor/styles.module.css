@@ -1,14 +1,26 @@
 .main {
+  width: 100%;
+  display: grid;
+  grid-template-rows: 1fr minmax(100vh, auto);
+  grid-template-columns: 200px auto;
+  grid-template-areas:
+    'head head '
+    'sidebar main ';
 }
 
 .pageNameContainer {
+  grid-area: head;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
 }
 
 .pageName {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-size: 1.3rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+  font-family: 'Barlow', sans-serif;
 }
 
 .pageName > span {
@@ -16,10 +28,8 @@
 }
 
 .btnContainer {
+  padding-right: 1rem;
   display: inline-flex;
   gap: 1rem;
   align-items: center;
-}
-
-.constructorArea {
 }

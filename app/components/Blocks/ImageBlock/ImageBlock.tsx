@@ -6,12 +6,20 @@ import {
 import styles from './styles.module.css';
 import {BsFillFileImageFill} from 'react-icons/bs';
 import {useEffect, useState} from 'react';
+import {Page} from '@prisma/client';
+import {Link} from '@remix-run/react';
+import {SerializeFrom} from '@remix-run/node';
+import Dropzone from './Dropzone';
 export type TextBlockInstanceType = PageBlockInstance & {
   additionalProperties: typeof additionalProperties;
 };
 
 const type: BlocksType = 'ImageBlock';
-
+type ImageBlockContentType = {
+  filepath: string;
+  type: string;
+  name: string;
+};
 const additionalProperties = {
   label: 'Image Block',
   required: false,
@@ -101,24 +109,44 @@ export default PreviewComponent;
 
 function ConstructorComponent({
   elementInstance,
+  page,
 }: {
+  page?: SerializeFrom<Page>;
   elementInstance: PageBlockInstance;
 }) {
+  const content = JSON.parse(
+    elementInstance.additionalProperties?.content as string
+  ) as ImageBlockContentType[];
+
   return (
     <>
       {elementInstance.additionalProperties?.label}
-      {/* <img
-        src={`/uploads/${elementInstance.additionalProperties?.path}`}
-        alt="asd"
-      /> */}
+      {content.map((img, index) => (
+        <img
+          key={index}
+          style={{maxWidth: '150px'}}
+          src={`/uploads/${img.name}`}
+          alt="asd"
+        />
+      ))}
+
+      <Link
+        prefetch="intent"
+        reloadDocument={true}
+        to={`/admin/${page?.slug}/constructor/${elementInstance.id}/edit`}
+      >
+        Edit
+      </Link>
     </>
   );
 }
 
 function PropertiesComponent({
   elementInstance,
+  page,
 }: {
   elementInstance: PageBlockInstance;
+  page?: SerializeFrom<Page>;
 }) {
   const [images, setImages] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
@@ -146,7 +174,7 @@ function PropertiesComponent({
   }, [elementInstance.additionalProperties?.path]);
   return (
     <div className={styles.propertiesContainer}>
-      {/* <Dropzone elementInstance={elementInstance} /> */}
+      <Dropzone element={elementInstance} page={page} />
       <div>
         <div>
           {isLoading ? (

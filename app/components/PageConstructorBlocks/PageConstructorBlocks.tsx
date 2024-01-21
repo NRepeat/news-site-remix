@@ -3,6 +3,8 @@ import {IconType} from 'react-icons';
 import {TextBlock} from '../Blocks/TextBlock/TextBlock';
 import {ImageBlock} from '../Blocks/ImageBlock/ImageBlock';
 import {SliderBlock} from '../Blocks/SliderBlock/SliderBlock';
+import {Page} from '@prisma/client';
+import {SerializeFrom} from '@remix-run/node';
 
 export type BlocksType = 'TextBlock' | 'ImageBlock' | 'SliderBlock';
 export type PageBlockInstance = {
@@ -19,10 +21,13 @@ export type PageBlock = {
   };
   constructorComponent: React.FC<{
     elementInstance: PageBlockInstance;
-    page: string;
+    page?: SerializeFrom<Page>;
   }>;
   previewComponent: React.FC<{elementInstance: PageBlockInstance}>;
-  propertiesComponent: React.FC<{elementInstance: PageBlockInstance}>;
+  propertiesComponent: React.FC<{
+    elementInstance: PageBlockInstance;
+    page?: SerializeFrom<Page>;
+  }>;
 };
 
 export type PageBlocksType = {

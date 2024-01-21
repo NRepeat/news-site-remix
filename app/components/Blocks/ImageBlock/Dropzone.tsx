@@ -1,118 +1,97 @@
-// import { Form } from "@remix-run/react";
-// import { useState } from "react";
-// import { PageBlockInstance } from "~/components/PageConstructorBlocks/PageConstructorBlocks";
+import {Page} from '@prisma/client';
+import {SerializeFrom} from '@remix-run/node';
+import {Form, useSubmit} from '@remix-run/react';
+import {useState} from 'react';
+import {PageBlockInstance} from '~/components/PageConstructorBlocks/PageConstructorBlocks';
 
-// export default function Dropzone({ elementInstance }: { elementInstance: PageBlockInstance }) {
-//   const [imageProperties, setImageProperties] = useState({
-//     align: 'center',
-//     width: '100%',
-//     height: 'auto',
-//     caption: 'Image Caption',
-//   });
+export default function Dropzone({
+  element,
+  page,
+}: {
+  page?: SerializeFrom<Page>;
+  element: PageBlockInstance;
+}) {
+  console.log('🚀 ~ Dropzone ~ page:', page);
+  const sub = useSubmit();
+  const [selectedFiles, setSelectedFiles] = useState<File[] | null>(null);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
 
-//   const handleAlignChange = (newAlign: string) => {
-//     setImageProperties(prevProperties => ({
-//       ...prevProperties,
-//       align: newAlign,
-//     }));
-//   };
+  const handleFileChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    if (event.target.files) {
+      const newFiles = event.target.files[0];
+      const newPreviews = [...imagePreviews];
 
-//   const handleWidthChange = (newWidth: string) => {
-//     setImageProperties(prevProperties => ({
-//       ...prevProperties,
-//       width: newWidth,
-//     }));
-//   };
+      const reader = new FileReader();
 
-//   const handleHeightChange = (newHeight: string) => {
-//     setImageProperties(prevProperties => ({
-//       ...prevProperties,
-//       height: newHeight,
-//     }));
-//   };
+      reader.onloadend = () => {
+        newPreviews[index] = reader.result as string;
+        setImagePreviews(newPreviews);
+      };
 
-//   const handleCaptionChange = (newCaption: string) => {
-//     setImageProperties(prevProperties => ({
-//       ...prevProperties,
-//       caption: newCaption,
-//     }));
-//   };
-//   const handleSave = (e?: React.ChangeEvent<HTMLInputElement>) => {
-//     const fileName = e?.target.value.slice(
-//       e.target.value.lastIndexOf('\\') + 1
-//     );
+      reader.readAsDataURL(newFiles);
 
-//     const updatedElement = {
-//       ...elementInstance,
-//       additionalProperties: {
-//         ...elementInstance.additionalProperties,
-//         path: fileName ? fileName : elementInstance.additionalProperties!.path,
+      setSelectedFiles(prev => {
+        const newFiles = prev ? [...prev] : [];
+        if (!event.target.files) return prev;
+        newFiles[index] = event.target.files[0];
+        return newFiles;
+      });
+    }
+  };
 
-//         align: imageProperties.align,
-//         width: imageProperties.width,
-//         height: imageProperties.height,
-//         caption: imageProperties.caption,
-//       },
-//     };
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
 
-//   };
-//   return (
-//     <>
-//       <Form
-//         method="post"
-//         action="/main/constructor/upload"
-//         encType="multipart/form-data"
-//       >
-//         <label>
-//           Select file:
-//           <input type="file" name="file" onChange={e => handleSave(e)} />
-//         </label>
-//         <button type="submit">Upload</button>
-//       </Form>
-//       <div>
-//         <h2>Image Controls</h2>
-//         <label>
-//           Align:
-//           <select
-//             value={imageProperties.align}
-//             onChange={e => handleAlignChange(e.target.value)}
-//           >
-//             <option value="left">Left</option>
-//             <option value="center">Center</option>
-//             <option value="right">Right</option>
-//           </select>
-//         </label>
-//         <br />
-//         <label>
-//           Width:
-//           <input
-//             type="text"
-//             value={imageProperties.width}
-//             onChange={e => handleWidthChange(e.target.value)}
-//           />
-//         </label>
-//         <br />
-//         <label>
-//           Height:
-//           <input
-//             type="text"
-//             value={imageProperties.height}
-//             onChange={e => handleHeightChange(e.target.value)}
-//           />
-//         </label>
-//         <br />
-//         <label>
-//           Caption:
-//           <input
-//             type="text"
-//             value={imageProperties.caption}
-//             onChange={e => handleCaptionChange(e.target.value)}
-//           />
-//         </label>
-//         <br />
+    if (selectedFiles) {
+      const formData = new FormData();
+      for (let i = 0; i < selectedFiles.length; i++) {
+        formData.set(`files${i}`, selectedFiles[i]);
+      }
 
-//         <button onClick={() => handleSave()}>Save</button>
-//       </div>
-//     </>
-//   );
-// }
+      try {
+        sub(formData, {
+          method: 'post',
+          encType: 'multipart/form-data',
+          action: `/admin/${page?.slug}/constructor/${element.id}/upload`,
+          navigate: false,
+        });
+      } catch (error) {
+        console.error('Error submitting form:', error);
+      }
+    }
+  };
+  const [inputInstance, setInputInstance] = useState(1);
+  return (
+    <>
+      <button onClick={() => setInputInstance(prev => prev + 1)}>
+        Add image
+      </button>
+      <Form method="post" encType="multipart/form-data" onSubmit={handleSubmit}>
+        {Array.from({length: inputInstance}).map((_, index) => (
+          <div key={index}>
+            <label htmlFor={`file${index}`}>Load image</label>
+            <input
+              type="file"
+              name={`files${index}`}
+              onChange={e => handleFileChange(e, index)}
+            />
+            <label htmlFor={`caption${index}`}>Caption</label>
+            <input type="text" name={`caption${index}`} />
+            {imagePreviews[index] && (
+              <img
+                style={{maxWidth: '100px', maxHeight: '100px'}}
+                src={imagePreviews[index]}
+                alt={`Preview ${index}`}
+              />
+            )}
+          </div>
+        ))}
+
+        <button type="submit">Save</button>
+      </Form>
+    </>
+  );
+}
