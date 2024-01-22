@@ -1,12 +1,12 @@
+import {Page} from '@prisma/client';
+import {SerializeFrom} from '@remix-run/node';
+import {Link} from '@remix-run/react';
+import clsx from 'clsx';
 import {
   PageBlockInstance,
   PageBlocks,
 } from '~/components/PageConstructorBlocks/PageConstructorBlocks';
 import styles from './styles.module.css';
-import clsx from 'clsx';
-import {SerializeFrom} from '@remix-run/node';
-import {Page} from '@prisma/client';
-import {Link} from '@remix-run/react';
 
 const PropertiesBar = ({
   element,
@@ -19,8 +19,12 @@ const PropertiesBar = ({
 
   return (
     <div className={clsx(styles.container)}>
-      <Link to={`/admin/${page.slug}/constructor`}>X</Link>
-      <PropertiesBlock elementInstance={element} page={page} />
+      <Link className={styles.head} to={`/admin/${page.slug}/constructor`}>
+        Close edit tab
+      </Link>
+      <div className={styles.wrapper}>
+        <PropertiesBlock elementInstance={element} page={page} />
+      </div>
     </div>
   );
 };

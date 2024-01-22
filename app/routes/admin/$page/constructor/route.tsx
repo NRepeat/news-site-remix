@@ -3,8 +3,9 @@ import {
   type LoaderFunctionArgs,
 } from '@remix-run/node';
 import {Outlet, json, useLoaderData} from '@remix-run/react';
-import {getPage, removeElement, updatePageContent} from '~/service/page.server';
 import ConstructorLayout from '~/Layout/ConstructorLayout/ConstructorLayout';
+import {removeElement} from '~/service/element.server';
+import {getPage, updatePageContent} from '~/service/page.server';
 export async function action({request, params}: ActionFunctionArgs) {
   try {
     const formData = await request.formData();

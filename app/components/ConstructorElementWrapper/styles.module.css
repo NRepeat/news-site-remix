@@ -1,7 +1,7 @@
 .wrapper {
   width: 100%;
   min-height: 120px;
-  border: 1px solid white;
+  border: 1px dotted rgba(0, 0, 0, 0.294);
   transition: all 0.1s;
 }
 
@@ -39,7 +39,7 @@
   position: absolute;
   top: 0;
   width: 100%;
-  height: 1px;
+  height: 5px;
   background-color: cadetblue;
 }
 
@@ -47,6 +47,6 @@
   position: absolute;
   bottom: 0;
   width: 100%;
-  height: 1px;
+  height: 5px;
   background-color: cadetblue;
 }

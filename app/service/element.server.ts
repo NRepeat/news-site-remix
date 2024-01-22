@@ -1,5 +1,5 @@
 import {PageBlockInstance} from '~/components/PageConstructorBlocks/PageConstructorBlocks';
-import {getPage, updatePageContent} from './page.server';
+import {getPage, getPageContent, updatePageContent} from './page.server';
 
 export const getElement = async ({id, slug}: {id: string; slug: string}) => {
   try {
@@ -43,5 +43,23 @@ export const updateElement = async ({
     await updatePageContent({content: newElement, index: elementIndex, slug});
   } catch (error) {
     console.error(error);
+  }
+};
+
+export const removeElement = async ({id, slug}: {id: string; slug: string}) => {
+  try {
+    const content = await getPageContent({slug});
+    if (!content) throw new Error('not found');
+
+    let parsedContent = JSON.parse(content.content) as PageBlockInstance[];
+    parsedContent = parsedContent.filter(el => el.id !== id);
+
+    await prisma.page.update({
+      where: {slug},
+      data: {content: JSON.stringify(parsedContent)},
+    });
+  } catch (error) {
+    console.log('🚀 ~ removeElement ~ error:', error);
+    throw new Error('Not found');
   }
 };

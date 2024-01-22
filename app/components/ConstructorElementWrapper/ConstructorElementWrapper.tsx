@@ -1,13 +1,13 @@
 import {useDraggable, useDroppable} from '@dnd-kit/core';
 
+import {Page} from '@prisma/client';
+import {SerializeFrom} from '@remix-run/node';
+import clsx from 'clsx';
 import {
   PageBlockInstance,
   PageBlocks,
 } from '../PageConstructorBlocks/PageConstructorBlocks';
 import styles from './styles.module.css';
-import clsx from 'clsx';
-import {Page} from '@prisma/client';
-import {SerializeFrom} from '@remix-run/node';
 
 const ConstructorElementWrapper = ({
   element,

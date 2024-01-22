@@ -8,4 +8,5 @@
   border: 2px solid rgb(127, 165, 198);
   opacity: 0.6;
   pointer-events: none;
+  max-height: 120px;
 }

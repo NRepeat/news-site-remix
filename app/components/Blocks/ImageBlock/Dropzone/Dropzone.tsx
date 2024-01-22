@@ -3,6 +3,7 @@ import {SerializeFrom} from '@remix-run/node';
 import {Form, useSubmit} from '@remix-run/react';
 import {useState} from 'react';
 import {PageBlockInstance} from '~/components/PageConstructorBlocks/PageConstructorBlocks';
+import styles from './styles.module.css';
 
 export default function Dropzone({
   element,
@@ -11,8 +12,10 @@ export default function Dropzone({
   page?: SerializeFrom<Page>;
   element: PageBlockInstance;
 }) {
-  console.log('🚀 ~ Dropzone ~ page:', page);
   const sub = useSubmit();
+  const prevContentImg = element.additionalProperties?.content
+    ? JSON.parse(element.additionalProperties?.content as string)
+    : null;
   const [selectedFiles, setSelectedFiles] = useState<File[] | null>(null);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
 
@@ -65,33 +68,66 @@ export default function Dropzone({
   };
   const [inputInstance, setInputInstance] = useState(1);
   return (
-    <>
-      <button onClick={() => setInputInstance(prev => prev + 1)}>
-        Add image
-      </button>
-      <Form method="post" encType="multipart/form-data" onSubmit={handleSubmit}>
+    <div className={styles.container}>
+      {element.type !== 'ImageBlock' && (
+        <button onClick={() => setInputInstance(prev => prev + 1)}>
+          Add image
+        </button>
+      )}
+
+      <Form
+        className={styles.form}
+        method="post"
+        encType="multipart/form-data"
+        onSubmit={handleSubmit}
+      >
         {Array.from({length: inputInstance}).map((_, index) => (
-          <div key={index}>
-            <label htmlFor={`file${index}`}>Load image</label>
+          <div className={styles.wrapper} key={index}>
+            <label className={styles.label} htmlFor={`file${index}`}>
+              Background image
+            </label>
             <input
+              className={styles.addImageButton}
               type="file"
               name={`files${index}`}
               onChange={e => handleFileChange(e, index)}
             />
-            <label htmlFor={`caption${index}`}>Caption</label>
-            <input type="text" name={`caption${index}`} />
-            {imagePreviews[index] && (
-              <img
-                style={{maxWidth: '100px', maxHeight: '100px'}}
-                src={imagePreviews[index]}
-                alt={`Preview ${index}`}
-              />
+
+            {element.type !== 'ImageBlock' && (
+              <>
+                <label htmlFor={`caption${index}`}>Caption</label>
+                <input type="text" name={`caption${index}`} />
+              </>
+            )}
+            {imagePreviews.length !== 0 && (
+              <div className={styles.imagePrev}>
+                <p className={styles.prevLabel}>Preview image</p>
+                {imagePreviews[index] && (
+                  <img
+                    className={styles.imagePreviewWrapper}
+                    src={`${imagePreviews[index]}`}
+                    alt={`Preview ${index}`}
+                  />
+                )}
+              </div>
             )}
           </div>
         ))}
+        <div className={styles.imagePrev}>
+          <p className={styles.prevLabel}>Loaded image</p>
+          {prevContentImg ? (
+            <img
+              className={styles.imagePreviewWrapper}
+              src={`/uploads/${prevContentImg[0].name}`}
+              alt={prevContentImg[0].name}
+            />
+          ) : null}
+        </div>
 
-        <button type="submit">Save</button>
+        <button className={styles.submit} type="submit">
+          Save image
+        </button>
       </Form>
-    </>
+    </div>
   );
 }
