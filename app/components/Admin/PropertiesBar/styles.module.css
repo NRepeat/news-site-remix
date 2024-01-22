@@ -9,10 +9,12 @@
   border-left: 2px solid cadetblue;
   border-bottom: 2px solid cadetblue;
   flex-direction: column;
+  z-index: 10;
 }
 
 .wrapper {
   padding: 1rem;
+  overflow-y: auto;
 }
 
 .head {

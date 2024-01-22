@@ -1,15 +1,16 @@
-import {CiTextAlignLeft} from 'react-icons/ci';
+import { CiTextAlignLeft } from 'react-icons/ci';
 import {
   BlocksType,
   PageBlock,
   PageBlockInstance,
 } from '~/components/PageConstructorBlocks/PageConstructorBlocks';
-// import styles from './styles.module.css';
+import styles from './styles.module.css';
 
-import {Link} from '@remix-run/react';
+import { Page } from '@prisma/client';
+import { SerializeFrom } from '@remix-run/node';
+import useOpacity from '~/hooks/useOpacity';
+import ConstructorElementEditBar from '~/ui/ConstructorElementEditBar/ConstructorElementEditBar';
 import PropertiesComponent from './PropertiesComponent/PropertiesComponent';
-import {Page} from '@prisma/client';
-import {SerializeFrom} from '@remix-run/node';
 
 export type TextBlockInstanceType = PageBlockInstance & {
   additionalProperties: typeof additionalProperties;
@@ -27,7 +28,7 @@ const additionalProperties = {
 export const TextBlock: PageBlock = {
   type,
 
-  construct: ({id}) => ({
+  construct: ({ id }) => ({
     id,
     type,
     additionalProperties,
@@ -52,7 +53,7 @@ function PreviewComponent({
       elementInstance.additionalProperties?.content as string
     );
   }
-  return <div dangerouslySetInnerHTML={{__html: content}} />;
+  return <div dangerouslySetInnerHTML={{ __html: content }} />;
 }
 
 function ConstructorComponent({
@@ -63,7 +64,7 @@ function ConstructorComponent({
   page?: SerializeFrom<Page>;
 }) {
   let defaultContent: TextElementContentType = {
-    content: '<div>Not found</div>',
+    content: '<div>Text Block</div>',
     styles: {},
   };
 
@@ -79,20 +80,15 @@ function ConstructorComponent({
 
   const contentStyles: React.CSSProperties =
     typeof defaultContent.styles === 'string' ? {} : defaultContent.styles;
-
+  const { opacity, setOpacity } = useOpacity()
   return (
-    <div>
-      <Link
-        prefetch="render"
-        reloadDocument={true}
-        to={`/admin/${page?.slug}/constructor/${elementInstance.id}/edit`}
-      >
-        Edit content
-      </Link>
+    <div onMouseEnter={() => setOpacity(true)} onMouseLeave={() => setOpacity(false)} className={styles.container}>
+      <ConstructorElementEditBar opacity={opacity} elementInstance={elementInstance} slug={page?.slug} />
       {defaultContent && (
         <div
+          className={styles.content}
           style={contentStyles}
-          dangerouslySetInnerHTML={{__html: defaultContent.content}}
+          dangerouslySetInnerHTML={{ __html: defaultContent.content }}
         />
       )}
     </div>

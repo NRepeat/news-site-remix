@@ -1,9 +1,10 @@
-import {useSubmit} from '@remix-run/react';
-import {useCallback, useEffect, useRef, useState} from 'react';
+import { useSubmit } from '@remix-run/react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import sanitizeHtml from 'sanitize-html';
-import {PageBlockInstance} from '../PageConstructorBlocks/PageConstructorBlocks';
-import {z} from 'zod';
-
+import { z } from 'zod';
+import { Button } from '~/ui/Button/Button';
+import { PageBlockInstance } from '../PageConstructorBlocks/PageConstructorBlocks';
+import style from './styles.module.css';
 type StylesChange = {
   fontSize?: string;
   textPosition?: 'left' | 'right' | 'center';
@@ -11,7 +12,7 @@ type StylesChange = {
 };
 export const contentValidator = z.string().min(0);
 
-const TextEditor = ({element}: {element: PageBlockInstance}) => {
+const TextEditor = ({ element }: { element: PageBlockInstance }) => {
   const [fontSize, setFontSize] = useState<StylesChange['fontSize']>('16');
   const [textAlign, setTextAlign] =
     useState<StylesChange['textPosition']>('left');
@@ -28,13 +29,13 @@ const TextEditor = ({element}: {element: PageBlockInstance}) => {
   const [content, setContent] = useState(
     elementContent.content ?? elementContent
   );
-  useEffect(() => {}, []);
+  useEffect(() => { }, []);
 
-  const handleTextAlignChange = ({textPosition}: StylesChange) => {
+  const handleTextAlignChange = ({ textPosition }: StylesChange) => {
     setTextAlign(textPosition);
     handleContentChange();
   };
-  const handleTextDecorationChange = ({textDecoration}: StylesChange) => {
+  const handleTextDecorationChange = ({ textDecoration }: StylesChange) => {
     setTextDecoration(prev => (prev === textDecoration ? '' : textDecoration));
     handleContentChange();
   };
@@ -45,7 +46,7 @@ const TextEditor = ({element}: {element: PageBlockInstance}) => {
   const handleContentChange = useCallback(() => {
     const sanitizeConf = {
       allowedTags: ['div', 'b', 'i', 'em', 'strong', 'a', 'p', 'h1'],
-      allowedAttributes: {a: ['href'], div: ['style']},
+      allowedAttributes: { a: ['href'], div: ['style'] },
     };
 
     const divElement = editorRef.current;
@@ -73,7 +74,7 @@ const TextEditor = ({element}: {element: PageBlockInstance}) => {
 
   const sub = useSubmit();
   const handleSave = () => {
-    const serializedData = JSON.stringify({content, styles});
+    const serializedData = JSON.stringify({ content, styles });
 
     sub(
       {
@@ -81,73 +82,98 @@ const TextEditor = ({element}: {element: PageBlockInstance}) => {
         content: contentValidator.parse(serializedData),
         type: 'textEditor',
       },
-      {method: 'post'}
+      { method: 'post' }
     );
   };
   return (
-    <div className="text-editor">
-      <label>
-        Размер текста:
-        <input
-          type="number"
-          value={fontSize}
-          onChange={handleFontSizeChange}
-          min="1"
-          max="100"
-        />
-      </label>
+    <div className={style.textEditor}>
+      <p className={style.title}>
+        Text Editor
+      </p>
+
+
+      <div className={style.editContainer}>
+        <div className={style.textStyle}>
+          <p>Text styles</p>
+          <EditButton cmd="italic" />
+          <EditButton cmd="bold" />
+          <EditButton cmd="formatBlock" arg="h1" name="heading" />
+          {/* <EditButton
+            cmd="createLink"
+            arg="https://github.com/lovasoa/react-contenteditable"
+            name="hyperlink"
+          /> */}
+
+          <Button
+            className={style.button}
+            onMouseDown={() =>
+              handleTextDecorationChange({ textDecoration: 'underline' })
+            }
+          >
+            underline
+          </Button>
+        </div>
+
+        <div className={style.textAlign}>
+          <p>Text align</p>
+          <Button className={style.button} onMouseDown={() => handleTextAlignChange({ textPosition: 'left' })}>
+            Left
+          </Button>
+          <Button
+            className={style.button}
+            onMouseDown={() => handleTextAlignChange({ textPosition: 'center' })}
+          >
+            Center
+          </Button>
+          <Button
+            className={style.button}
+            onMouseDown={() => handleTextAlignChange({ textPosition: 'right' })}
+          >
+            Right
+          </Button>
+
+        </div>
+        <div className={style.fontStyles}>
+          <p>Font styles</p>
+          <label className={style.fontSize}>
+            Font size
+            <input
+              className={style.fontSizeInput}
+              type="number"
+              value={fontSize}
+              onChange={handleFontSizeChange}
+              min="1"
+              max="100"
+            />
+          </label>
+        </div>
+
+      </div>
 
       <div
         ref={editorRef}
-        className="editable-content"
+        className={style.editableContent}
         contentEditable
         onBlur={handleContentChange}
         style={content.styles}
-        dangerouslySetInnerHTML={{__html: content}}
+        dangerouslySetInnerHTML={{ __html: content }}
       />
-      <EditButton cmd="italic" />
-      <EditButton cmd="bold" />
-      <EditButton cmd="formatBlock" arg="h1" name="heading" />
-      <EditButton
-        cmd="createLink"
-        arg="https://github.com/lovasoa/react-contenteditable"
-        name="hyperlink"
-      />
-      <button onMouseDown={() => handleTextAlignChange({textPosition: 'left'})}>
-        Left
-      </button>
-      <button
-        onMouseDown={() => handleTextAlignChange({textPosition: 'center'})}
-      >
-        Center
-      </button>
-      <button
-        onMouseDown={() => handleTextAlignChange({textPosition: 'right'})}
-      >
-        Right
-      </button>
-      <button
-        onMouseDown={() =>
-          handleTextDecorationChange({textDecoration: 'underline'})
-        }
-      >
-        underline
-      </button>
-      <button onClick={handleSave}>Save</button>
+      <Button className={style.saveButton} onClick={handleSave}>Save</Button>
     </div>
   );
 };
 
-const EditButton = (props: {cmd: string; arg?: string; name?: string}) => {
+const EditButton = (props: { cmd: string; arg?: string; name?: string }) => {
   return (
-    <button
+    <Button
+      className={style.button}
       onMouseDown={evt => {
         evt.preventDefault();
         document.execCommand(props.cmd, false, props.arg);
       }}
     >
       {props.name || props.cmd}
-    </button>
+    </Button>
   );
 };
 export default TextEditor;

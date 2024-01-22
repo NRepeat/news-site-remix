@@ -54,7 +54,6 @@
   display: inline-flex;
   flex-direction: column;
   gap: 1rem;
-  /* padding-left: 1rem; */
 }
 
 .prevLabel {
@@ -69,7 +68,6 @@
 }
 
 .submit {
-  /* margin-left: 1rem; */
   background-color: cadetblue;
   border: 1px solid black;
   padding: 1rem;

@@ -11,7 +11,6 @@ export const getElement = async ({id, slug}: {id: string; slug: string}) => {
     if (!element) throw new Error('Not found');
     return element;
   } catch (error) {
-    console.log('🚀 ~ getElement ~ error:', error);
     throw new Error('Not found');
   }
 };
@@ -40,6 +39,7 @@ export const updateElement = async ({
         content: content,
       },
     };
+
     await updatePageContent({content: newElement, index: elementIndex, slug});
   } catch (error) {
     console.error(error);

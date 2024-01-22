@@ -1,0 +1,57 @@
+.blockName {
+  font-size: 1.2rem;
+  background-color: rgba(255, 255, 255, 0.848);
+  padding: 1rem;
+}
+
+
+
+.head {
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px dotted black;
+  background-color: rgba(95, 158, 160, 0.402);
+}
+
+.wrapper {
+  display: inline-flex;
+  height: 100%;
+}
+
+.link:hover {
+  color: white;
+}
+
+.link {
+  color: black;
+  text-decoration: none;
+  background-color: cadetblue;
+  width: min-content;
+  padding: 1rem;
+  font-size: 1.2rem;
+}
+
+.deleteButton {
+  color: black;
+  text-decoration: none;
+  background-color: rgb(226, 7, 40);
+  width: max-content;
+  font-size: 1.2rem;
+  border: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.9rem;
+}
+
+.deleteButton:hover {
+  color: white;
+  background-color: black;
+}
