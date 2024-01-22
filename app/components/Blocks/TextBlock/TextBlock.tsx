@@ -1,4 +1,4 @@
-import { CiTextAlignLeft } from 'react-icons/ci';
+import {CiTextAlignLeft} from 'react-icons/ci';
 import {
   BlocksType,
   PageBlock,
@@ -6,8 +6,8 @@ import {
 } from '~/components/PageConstructorBlocks/PageConstructorBlocks';
 import styles from './styles.module.css';
 
-import { Page } from '@prisma/client';
-import { SerializeFrom } from '@remix-run/node';
+import {Page} from '@prisma/client';
+import {SerializeFrom} from '@remix-run/node';
 import useOpacity from '~/hooks/useOpacity';
 import ConstructorElementEditBar from '~/ui/ConstructorElementEditBar/ConstructorElementEditBar';
 import PropertiesComponent from './PropertiesComponent/PropertiesComponent';
@@ -28,7 +28,7 @@ const additionalProperties = {
 export const TextBlock: PageBlock = {
   type,
 
-  construct: ({ id }) => ({
+  construct: ({id}) => ({
     id,
     type,
     additionalProperties,
@@ -53,7 +53,7 @@ function PreviewComponent({
       elementInstance.additionalProperties?.content as string
     );
   }
-  return <div dangerouslySetInnerHTML={{ __html: content }} />;
+  return <div dangerouslySetInnerHTML={{__html: content}} />;
 }
 
 function ConstructorComponent({
@@ -80,15 +80,23 @@ function ConstructorComponent({
 
   const contentStyles: React.CSSProperties =
     typeof defaultContent.styles === 'string' ? {} : defaultContent.styles;
-  const { opacity, setOpacity } = useOpacity()
+  const {opacity, setOpacity} = useOpacity();
   return (
-    <div onMouseEnter={() => setOpacity(true)} onMouseLeave={() => setOpacity(false)} className={styles.container}>
-      <ConstructorElementEditBar opacity={opacity} elementInstance={elementInstance} slug={page?.slug} />
+    <div
+      onMouseEnter={() => setOpacity(true)}
+      onMouseLeave={() => setOpacity(false)}
+      className={styles.container}
+    >
+      <ConstructorElementEditBar
+        opacity={opacity}
+        elementInstance={elementInstance}
+        slug={page?.slug}
+      />
       {defaultContent && (
         <div
           className={styles.content}
           style={contentStyles}
-          dangerouslySetInnerHTML={{ __html: defaultContent.content }}
+          dangerouslySetInnerHTML={{__html: defaultContent.content}}
         />
       )}
     </div>

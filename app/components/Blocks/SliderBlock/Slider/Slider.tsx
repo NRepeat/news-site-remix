@@ -1,9 +1,9 @@
-import React, { ReactChild, ReactNode } from 'react';
-import { Carousel } from 'react-responsive-carousel';
+import React, {ReactChild, ReactNode} from 'react';
+import {Carousel} from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 // import styles from './styles.module.css';
 
-const CustomSlider = ({ children }: { children: React.ReactNode }) => {
+const CustomSlider = ({children}: {children: React.ReactNode}) => {
   const renderCustomThumbs = (items: ReactNode[]) => {
     return items.map((item, index) => (
       <div key={index} className="custom-thumb">
@@ -35,7 +35,7 @@ export type SlideType = {
   text?: string;
 };
 
-export const Slide = ({ img, text }: SlideType) => {
+export const Slide = ({img, text}: SlideType) => {
   return (
     <>
       <img src={`/uploads/${img}`} alt={img} />

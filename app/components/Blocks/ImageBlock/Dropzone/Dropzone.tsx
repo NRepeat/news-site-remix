@@ -1,9 +1,9 @@
-import { Page } from '@prisma/client';
-import { SerializeFrom } from '@remix-run/node';
-import { Form, useSubmit } from '@remix-run/react';
-import { useRef, useState } from 'react';
-import { PageBlockInstance } from '~/components/PageConstructorBlocks/PageConstructorBlocks';
-import { ImageBlockContentType } from '../ImageBlock';
+import {Page} from '@prisma/client';
+import {SerializeFrom} from '@remix-run/node';
+import {Form, useSubmit} from '@remix-run/react';
+import {useRef, useState} from 'react';
+import {PageBlockInstance} from '~/components/PageConstructorBlocks/PageConstructorBlocks';
+import {ImageBlockContentType} from '../ImageBlock';
 import styles from './styles.module.css';
 
 export default function Dropzone({
@@ -13,15 +13,16 @@ export default function Dropzone({
   page?: SerializeFrom<Page>;
   element: PageBlockInstance;
 }) {
-  if (!page) throw new Error("Page not found")
+  if (!page) throw new Error('Page not found');
   const sub = useSubmit();
-  const prevContentImg: ImageBlockContentType[] | null = element.additionalProperties?.content
+  const prevContentImg: ImageBlockContentType[] | null = element
+    .additionalProperties?.content
     ? JSON.parse(element.additionalProperties?.content as string)
     : null;
 
   const [selectedFiles, setSelectedFiles] = useState<File[] | null>(null);
   const [imagePreviews, setImagePreviews] = useState<string[] | null>([]);
-  const inputRef = useRef(null)
+  const inputRef = useRef(null);
 
   const handleFileChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -29,10 +30,9 @@ export default function Dropzone({
   ) => {
     if (event.target.files) {
       const newFiles = event.target.files;
-      let newPreviews: string[] = []
+      let newPreviews: string[] = [];
 
       if (Array.isArray(imagePreviews)) newPreviews = [...imagePreviews];
-
 
       const processFile = (file: File, index: number) => {
         const reader = new FileReader();
@@ -44,7 +44,7 @@ export default function Dropzone({
 
         reader.readAsDataURL(file);
 
-        setSelectedFiles((prev) => {
+        setSelectedFiles(prev => {
           const newFiles = prev ? [...prev] : [];
           newFiles[index] = file;
           return newFiles;
@@ -61,7 +61,6 @@ export default function Dropzone({
         return newFiles;
       });
     }
-
   };
   const handleRemoveImage = (index: number) => {
     if (inputRef.current) {
@@ -70,10 +69,10 @@ export default function Dropzone({
 
     setSelectedFiles(prev => {
       const newFiles = prev ? [...prev] : [];
-      newFiles.filter((fl, i) => i !== index)
+      newFiles.filter((fl, i) => i !== index);
       return newFiles;
     });
-    setImagePreviews((prev) => {
+    setImagePreviews(prev => {
       if (Array.isArray(prev)) {
         const newPreviews = [...prev];
         newPreviews.splice(index, 1);
@@ -103,27 +102,24 @@ export default function Dropzone({
       }
     }
   };
-  const inputInstance = 1
+  const inputInstance = 1;
   return (
     <div className={styles.container}>
-
-
       <Form
         className={styles.form}
         method="post"
         encType="multipart/form-data"
         onSubmit={handleSubmit}
       >
-        {Array.from({ length: inputInstance }).map((_, index) => (
+        {Array.from({length: inputInstance}).map((_, index) => (
           <div className={styles.wrapper} key={index}>
             <label className={styles.label} htmlFor={`file${index}`}>
               {element.type === 'SliderBlock' && <span>Slider images</span>}
-              {element.type === 'ImageBlock' && <span>  Background image</span>}
-
+              {element.type === 'ImageBlock' && <span> Background image</span>}
             </label>
             <input
               ref={inputRef}
-              multiple={element.type !== "ImageBlock" ? true : false}
+              multiple={element.type !== 'ImageBlock' ? true : false}
               className={styles.addImageButton}
               type="file"
               name={`files${index}`}
@@ -151,29 +147,28 @@ export default function Dropzone({
                   ))}
                 </div>
               </>
-
             )}
-
           </div>
         ))}
         <div className={styles.imagePrev}>
           <p className={styles.prevLabel}>Loaded image</p>
-          {prevContentImg ? prevContentImg.map((img, i) => {
-            return <img
-              key={i}
-              className={styles.imagePreviewWrapper}
-              src={`/uploads/${prevContentImg[i].name}`}
-              alt={img.name}
-            />
-          }
-
-          ) : null}
+          {prevContentImg
+            ? prevContentImg.map((img, i) => {
+                return (
+                  <img
+                    key={i}
+                    className={styles.imagePreviewWrapper}
+                    src={`/uploads/${prevContentImg[i].name}`}
+                    alt={img.name}
+                  />
+                );
+              })
+            : null}
         </div>
 
         <button className={styles.submit} type="submit">
-
-          {element.type === "SliderBlock" && <span>Save images</span>}
-          {element.type === "ImageBlock" && <span>Save image</span>}
+          {element.type === 'SliderBlock' && <span>Save images</span>}
+          {element.type === 'ImageBlock' && <span>Save image</span>}
         </button>
       </Form>
     </div>

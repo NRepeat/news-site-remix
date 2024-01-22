@@ -1,4 +1,4 @@
-import { BsFillFileImageFill } from 'react-icons/bs';
+import {BsFillFileImageFill} from 'react-icons/bs';
 import {
   BlocksType,
   PageBlock,
@@ -17,12 +17,12 @@ const type: BlocksType = 'SliderBlock';
 const additionalProperties = {
   label: 'Slider Block',
   required: false,
-  content: "",
+  content: '',
 };
 export const SliderBlock: PageBlock = {
   type,
 
-  construct: ({ id }) => ({
+  construct: ({id}) => ({
     id,
     type,
     additionalProperties,
@@ -35,7 +35,3 @@ export const SliderBlock: PageBlock = {
   previewComponent: PreviewComponent,
   propertiesComponent: PropertiesComponent,
 };
-
-
-
-

@@ -1,9 +1,9 @@
-import { useSubmit } from '@remix-run/react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {useSubmit} from '@remix-run/react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import sanitizeHtml from 'sanitize-html';
-import { z } from 'zod';
-import { Button } from '~/ui/Button/Button';
-import { PageBlockInstance } from '../PageConstructorBlocks/PageConstructorBlocks';
+import {z} from 'zod';
+import {Button} from '~/ui/Button/Button';
+import {PageBlockInstance} from '../PageConstructorBlocks/PageConstructorBlocks';
 import style from './styles.module.css';
 type StylesChange = {
   fontSize?: string;
@@ -12,7 +12,7 @@ type StylesChange = {
 };
 export const contentValidator = z.string().min(0);
 
-const TextEditor = ({ element }: { element: PageBlockInstance }) => {
+const TextEditor = ({element}: {element: PageBlockInstance}) => {
   const [fontSize, setFontSize] = useState<StylesChange['fontSize']>('16');
   const [textAlign, setTextAlign] =
     useState<StylesChange['textPosition']>('left');
@@ -29,13 +29,13 @@ const TextEditor = ({ element }: { element: PageBlockInstance }) => {
   const [content, setContent] = useState(
     elementContent.content ?? elementContent
   );
-  useEffect(() => { }, []);
+  useEffect(() => {}, []);
 
-  const handleTextAlignChange = ({ textPosition }: StylesChange) => {
+  const handleTextAlignChange = ({textPosition}: StylesChange) => {
     setTextAlign(textPosition);
     handleContentChange();
   };
-  const handleTextDecorationChange = ({ textDecoration }: StylesChange) => {
+  const handleTextDecorationChange = ({textDecoration}: StylesChange) => {
     setTextDecoration(prev => (prev === textDecoration ? '' : textDecoration));
     handleContentChange();
   };
@@ -46,7 +46,7 @@ const TextEditor = ({ element }: { element: PageBlockInstance }) => {
   const handleContentChange = useCallback(() => {
     const sanitizeConf = {
       allowedTags: ['div', 'b', 'i', 'em', 'strong', 'a', 'p', 'h1'],
-      allowedAttributes: { a: ['href'], div: ['style'] },
+      allowedAttributes: {a: ['href'], div: ['style']},
     };
 
     const divElement = editorRef.current;
@@ -74,7 +74,7 @@ const TextEditor = ({ element }: { element: PageBlockInstance }) => {
 
   const sub = useSubmit();
   const handleSave = () => {
-    const serializedData = JSON.stringify({ content, styles });
+    const serializedData = JSON.stringify({content, styles});
 
     sub(
       {
@@ -82,15 +82,12 @@ const TextEditor = ({ element }: { element: PageBlockInstance }) => {
         content: contentValidator.parse(serializedData),
         type: 'textEditor',
       },
-      { method: 'post' }
+      {method: 'post'}
     );
   };
   return (
     <div className={style.textEditor}>
-      <p className={style.title}>
-        Text Editor
-      </p>
-
+      <p className={style.title}>Text Editor</p>
 
       <div className={style.editContainer}>
         <div className={style.textStyle}>
@@ -107,7 +104,7 @@ const TextEditor = ({ element }: { element: PageBlockInstance }) => {
           <Button
             className={style.button}
             onMouseDown={() =>
-              handleTextDecorationChange({ textDecoration: 'underline' })
+              handleTextDecorationChange({textDecoration: 'underline'})
             }
           >
             underline
@@ -116,22 +113,24 @@ const TextEditor = ({ element }: { element: PageBlockInstance }) => {
 
         <div className={style.textAlign}>
           <p>Text align</p>
-          <Button className={style.button} onMouseDown={() => handleTextAlignChange({ textPosition: 'left' })}>
+          <Button
+            className={style.button}
+            onMouseDown={() => handleTextAlignChange({textPosition: 'left'})}
+          >
             Left
           </Button>
           <Button
             className={style.button}
-            onMouseDown={() => handleTextAlignChange({ textPosition: 'center' })}
+            onMouseDown={() => handleTextAlignChange({textPosition: 'center'})}
           >
             Center
           </Button>
           <Button
             className={style.button}
-            onMouseDown={() => handleTextAlignChange({ textPosition: 'right' })}
+            onMouseDown={() => handleTextAlignChange({textPosition: 'right'})}
           >
             Right
           </Button>
-
         </div>
         <div className={style.fontStyles}>
           <p>Font styles</p>
@@ -147,7 +146,6 @@ const TextEditor = ({ element }: { element: PageBlockInstance }) => {
             />
           </label>
         </div>
-
       </div>
 
       <div
@@ -156,14 +154,16 @@ const TextEditor = ({ element }: { element: PageBlockInstance }) => {
         contentEditable
         onBlur={handleContentChange}
         style={content.styles}
-        dangerouslySetInnerHTML={{ __html: content }}
+        dangerouslySetInnerHTML={{__html: content}}
       />
-      <Button className={style.saveButton} onClick={handleSave}>Save</Button>
+      <Button className={style.saveButton} onClick={handleSave}>
+        Save
+      </Button>
     </div>
   );
 };
 
-const EditButton = (props: { cmd: string; arg?: string; name?: string }) => {
+const EditButton = (props: {cmd: string; arg?: string; name?: string}) => {
   return (
     <Button
       className={style.button}

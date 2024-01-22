@@ -1,4 +1,4 @@
-import { PageBlockInstance } from '~/components/PageConstructorBlocks/PageConstructorBlocks';
+import {PageBlockInstance} from '~/components/PageConstructorBlocks/PageConstructorBlocks';
 import TextEditor from '~/components/TextEditors/TextEditor';
 
 const PropertiesComponent = ({
@@ -6,9 +6,7 @@ const PropertiesComponent = ({
 }: {
   elementInstance: PageBlockInstance;
 }) => {
-  return (
-    <TextEditor element={elementInstance} />
-  );
+  return <TextEditor element={elementInstance} />;
 };
 
 export default PropertiesComponent;

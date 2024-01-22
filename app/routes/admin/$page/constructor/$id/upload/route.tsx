@@ -6,15 +6,15 @@ import {
   unstable_createMemoryUploadHandler,
   unstable_parseMultipartFormData,
 } from '@remix-run/node';
-import { updateElement } from '~/service/element.server';
+import {updateElement} from '~/service/element.server';
 
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action({request, params}: ActionFunctionArgs) {
   try {
     const uploadHandler = unstable_composeUploadHandlers(
       unstable_createFileUploadHandler({
         directory: 'public/uploads',
         maxPartSize: 50000000,
-        file: ({ filename }) => filename,
+        file: ({filename}) => filename,
       }),
       unstable_createMemoryUploadHandler()
     );
@@ -26,16 +26,13 @@ export async function action({ request, params }: ActionFunctionArgs) {
     formData.forEach(value => files.push(value));
 
     const serializedFiles = JSON.stringify(files);
-    const id = params.id
-    const slug = params.page
+    const id = params.id;
+    const slug = params.page;
     if (!id || !slug) throw new Error('Not found');
-    await updateElement({ content: serializedFiles, id, slug });
-    return json({ serializedFiles });
-
-
+    await updateElement({content: serializedFiles, id, slug});
+    return json({serializedFiles});
   } catch (error) {
-    console.log("🚀 ~ action ~ error:", error)
-    throw new Error("Bad request")
+    console.log('🚀 ~ action ~ error:', error);
+    throw new Error('Bad request');
   }
 }
-

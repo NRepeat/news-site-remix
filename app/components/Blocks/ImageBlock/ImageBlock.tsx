@@ -1,4 +1,4 @@
-import { BsFillFileImageFill } from 'react-icons/bs';
+import {BsFillFileImageFill} from 'react-icons/bs';
 import {
   BlocksType,
   PageBlock,
@@ -31,7 +31,7 @@ const additionalProperties = {
 export const ImageBlock: PageBlock = {
   type,
 
-  construct: ({ id }) => ({
+  construct: ({id}) => ({
     id,
     type,
     additionalProperties,

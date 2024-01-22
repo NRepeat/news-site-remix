@@ -1,9 +1,9 @@
-import { Page } from '@prisma/client';
-import { SerializeFrom } from '@remix-run/node';
-import { PageBlockInstance } from '~/components/PageConstructorBlocks/PageConstructorBlocks';
+import {Page} from '@prisma/client';
+import {SerializeFrom} from '@remix-run/node';
+import {PageBlockInstance} from '~/components/PageConstructorBlocks/PageConstructorBlocks';
 import useOpacity from '~/hooks/useOpacity';
 import ConstructorElementEditBar from '~/ui/ConstructorElementEditBar/ConstructorElementEditBar';
-import { ImageBlockContentType } from '../ImageBlock';
+import {ImageBlockContentType} from '../ImageBlock';
 import styles from './styles.module.css';
 
 export default function ConstructorComponent({
@@ -15,14 +15,22 @@ export default function ConstructorComponent({
 }) {
   const content = elementInstance.additionalProperties?.content
     ? (JSON.parse(
-      elementInstance.additionalProperties?.content as string
-    ) as ImageBlockContentType[])
+        elementInstance.additionalProperties?.content as string
+      ) as ImageBlockContentType[])
     : '';
 
-  const { opacity, setOpacity } = useOpacity()
+  const {opacity, setOpacity} = useOpacity();
   return (
-    <div onMouseEnter={() => setOpacity(true)} onMouseLeave={() => setOpacity(false)} className={styles.container}>
-      <ConstructorElementEditBar opacity={opacity} elementInstance={elementInstance} slug={page?.slug} />
+    <div
+      onMouseEnter={() => setOpacity(true)}
+      onMouseLeave={() => setOpacity(false)}
+      className={styles.container}
+    >
+      <ConstructorElementEditBar
+        opacity={opacity}
+        elementInstance={elementInstance}
+        slug={page?.slug}
+      />
 
       {content &&
         content.map((img, index) => (

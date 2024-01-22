@@ -9,7 +9,7 @@ type AdminPageLayoutProps = {
 const AdminPageLayout: FC<AdminPageLayoutProps> = ({children}) => {
   return (
     <section className={styles.container}>
-      <Header /> {children}{' '}
+      <Header /> {children}
     </section>
   );
 };
