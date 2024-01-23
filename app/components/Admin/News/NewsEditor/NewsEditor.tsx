@@ -1,15 +1,30 @@
-import {Bold} from '@tiptap/extension-bold';
-import {Image as ImageExtension} from '@tiptap/extension-image';
-import {Italic} from '@tiptap/extension-italic';
-import {Link} from '@tiptap/extension-link';
-import {Underline} from '@tiptap/extension-underline';
-import {EditorContent, useEditor} from '@tiptap/react';
-import {StarterKit} from '@tiptap/starter-kit';
+import { Post } from '@prisma/client';
+import { SerializeFrom } from '@remix-run/node';
+import { useSubmit } from '@remix-run/react';
+import { Bold } from '@tiptap/extension-bold';
+import { Image as ImageExtension } from '@tiptap/extension-image';
+import { Italic } from '@tiptap/extension-italic';
+import { Link } from '@tiptap/extension-link';
+import { Underline } from '@tiptap/extension-underline';
+import { EditorContent, useEditor } from '@tiptap/react';
+import { StarterKit } from '@tiptap/starter-kit';
+import { useState } from 'react';
 import useSaveImage from '~/hooks/useSaveImage';
+import { Button } from '~/ui/Button/Button';
 import ToolBar from './ToolBar/ToolBar';
 import styles from './styles.module.css';
-const NewsEditor = () => {
-  const {saveImage} = useSaveImage();
+
+type NewsEditorType = {
+  post: SerializeFrom<Post | null>
+}
+
+const NewsEditor = ({ post }: NewsEditorType) => {
+  const { saveImage } = useSaveImage();
+  if (!post?.content) throw new Error("Not found")
+  const [content, setContent] = useState<string | undefined>(JSON.parse(post.content))
+  const [files, setFiles] = useState<File[]>([])
+
+  const submit = useSubmit()
 
   const editor = useEditor({
     extensions: [
@@ -22,11 +37,12 @@ const NewsEditor = () => {
         openOnClick: false,
       }),
     ],
+    onUpdate: ((editor) => {
 
-    // onBlur: ((editor) => {
+      const content = editor.editor.getHTML()
+      setContent(content)
+    }),
 
-    //   const content = editor.editor.getHTML()
-    // }),
 
     editorProps: {
       handleDrop: (view, event, slice, moved) => {
@@ -46,21 +62,19 @@ const NewsEditor = () => {
                 'Your images need to be less than 5000 pixels in height and width.'
               );
             } else {
-              saveImage({
-                action: '/admin/news/1/upload/',
-                file,
-                navigate: false,
-              });
+              setFiles(prev => [file, ...prev])
+
+              console.log("🚀 ~ NewsEditor ~ file:", file.name)
               const image = new Image();
-              image.src = '/uploads/1.jpg';
+              image.src = `/uploads/${file.name}`;
               image.onload = () => {
-                const {schema} = view.state;
+                const { schema } = view.state;
                 const coordinates = view.posAtCoords({
                   left: event.clientX,
                   top: event.clientY,
                 });
                 if (!coordinates) throw new Error('Not found');
-                const node = schema.nodes.image.create({src: '/uploads/1.jpg'});
+                const node = schema.nodes.image.create({ src: img.src });
                 const transaction = view.state.tr.insert(
                   coordinates?.pos,
                   node
@@ -75,16 +89,30 @@ const NewsEditor = () => {
       },
     },
     content: `
-        <p>This is a basic example of implementing images. Drag to re-order.</p>
-        <img src="https://source.unsplash.com/8xznAGy4HcY/800x400" />
-        <img src="https://source.unsplash.com/K9QHL52rE2k/800x400" />
-      `,
+    ${content ? content : ""}`
+    ,
   });
   if (!editor) {
     return <div>Loading...</div>;
   }
+  const handleSubmit = () => {
+    const formData = new FormData()
+    formData.set("postContent", content ? content : "")
+    files.map(file =>
+      saveImage({
+        action: '/admin/news/1/upload/',
+        file,
+        navigate: false,
+      }))
+
+    submit(formData, { action: "/admin/news/1/edit", method: "post", navigate: false })
+  }
+
   return (
     <div className={styles.container}>
+      <Button onClick={() => handleSubmit()}>
+        Save
+      </Button>
       <ToolBar editor={editor} />
 
       <EditorContent className={styles.editor} editor={editor} />

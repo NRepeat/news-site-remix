@@ -1,9 +1,10 @@
-import NewsEditor from '~/components/Admin/News/NewsEditor/NewsEditor';
+import { Link, Outlet } from "@remix-run/react";
 
 export default function News() {
   return (
     <div>
-      <NewsEditor />
+      <Outlet />
+      <Link to={"/admin/news/1/edit"}>News 1</Link>
     </div>
   );
 }
