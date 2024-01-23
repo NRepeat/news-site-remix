@@ -1,27 +1,33 @@
 import {Page} from '@prisma/client';
 import {SerializeFrom} from '@remix-run/node';
+import parse from 'html-react-parser';
+import {PostWithTags} from '~/service/post.server';
 import {
   PageBlockInstance,
   PageBlocks,
 } from '../PageConstructorBlocks/PageConstructorBlocks';
+const PageWrapper = ({
+  page,
+  post,
+}: {
+  post: SerializeFrom<PostWithTags | null>;
+  page: SerializeFrom<Page> | null;
+}) => {
+  const postP = JSON.parse(post!.content);
 
-const PageWrapper = ({page}: {page: SerializeFrom<Page> | null}) => {
   if (!page) throw new Error('Page not found');
-  const content = '<div>Not found</div>';
-  if (page.content) {
-    const parsedContent = JSON.parse(page.content);
-    const prevComp = parsedContent.map((el: PageBlockInstance) => {
-      const PreviewComponent = PageBlocks[el.type].previewComponent;
-      return <PreviewComponent key={el.id} elementInstance={el} />;
-    });
-    return (
-      <>
-        <div dangerouslySetInnerHTML={{__html: content}} />
-        {prevComp}
-      </>
-    );
-  }
-  return <div dangerouslySetInnerHTML={{__html: content}} />;
+  const parsedContent = JSON.parse(page.content);
+  const prevComp = parsedContent.map((el: PageBlockInstance) => {
+    const PreviewComponent = PageBlocks[el.type].previewComponent;
+    return <PreviewComponent key={el.id} elementInstance={el} />;
+  });
+  const content = parse(postP);
+  return (
+    <>
+      {prevComp}
+      {content}
+    </>
+  );
 };
 
 export default PageWrapper;

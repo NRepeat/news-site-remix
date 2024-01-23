@@ -11,8 +11,8 @@ const Header = () => {
         <Link className={styles.link} to={'/admin'}>
           Pages properties
         </Link>
-        <Link className={styles.link} to={'/admin'}>
-          My page content
+        <Link prefetch="intent" className={styles.link} to={'/admin/news'}>
+          News
         </Link>
       </div>
       <div className={styles.account}>

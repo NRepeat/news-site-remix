@@ -47,13 +47,34 @@ function PreviewComponent({
 }: {
   elementInstance: PageBlockInstance;
 }) {
-  let content = '<div>Not found</div>';
+  let defaultContent: TextElementContentType = {
+    content: '<div>Text Block</div>',
+    styles: {},
+  };
+
   if (elementInstance.additionalProperties?.content) {
-    content = JSON.parse(
+    const parsedContent: TextElementContentType = JSON.parse(
       elementInstance.additionalProperties?.content as string
     );
+
+    if (parsedContent) {
+      defaultContent = parsedContent;
+    }
   }
-  return <div dangerouslySetInnerHTML={{__html: content}} />;
+
+  const contentStyles: React.CSSProperties =
+    typeof defaultContent.styles === 'string' ? {} : defaultContent.styles;
+  return (
+    <div>
+      {defaultContent && (
+        <div
+          className={styles.content}
+          style={contentStyles}
+          dangerouslySetInnerHTML={{__html: defaultContent.content}}
+        />
+      )}
+    </div>
+  );
 }
 
 function ConstructorComponent({

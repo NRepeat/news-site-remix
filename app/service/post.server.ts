@@ -1,13 +1,47 @@
+import {Post, Tags} from '@prisma/client';
 import {prisma} from '~/utils/prisma.server';
 
 type createPostType = {
   data: {slug: string; title: string; content: string; page: string};
 };
+export type PostWithTags = Post & {tags: Tags[]};
+export type GetAllPostsType = PostWithTags[];
+export const getAllPosts = async (): Promise<GetAllPostsType> => {
+  try {
+    const posts = await prisma.post.findMany({
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        description: true,
+        pageId: true,
+        thumbnail: true,
+        slug: true,
+        createdAt: true,
+        updatedAt: true,
+        tags: {
+          select: {
+            id: true,
+            slug: true,
+            name: true,
+            postId: true,
+          },
+        },
+      },
+    });
+    return posts;
+  } catch (error) {
+    throw new Error('Get post by ID error');
+  }
+};
 
-export const getPostById = async (postId: number) => {
+export const getPostById = async (
+  postId: number
+): Promise<PostWithTags | null> => {
   try {
     const post = await prisma.post.findUnique({
       where: {id: postId},
+      include: {tags: true},
     });
     return post;
   } catch (error) {

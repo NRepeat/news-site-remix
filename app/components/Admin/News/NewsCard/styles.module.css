@@ -1,0 +1,99 @@
+.container {
+  display: inline-flex;
+  flex-direction: column;
+  width: 300px;
+  position: relative;
+  /* border: 2px solid gainsboro; */
+  max-width: 400px;
+  max-height: 450px;
+  background-color: rgb(255, 255, 255);
+  font-family: 'Barlow', sans-serif;
+  text-decoration: none;
+  color: black;
+  border: 2px solid rgb(0, 0, 0);
+  -webkit-box-shadow: 2px 2px 5px 0px rgba(0, 0, 0, 0.53);
+  -moz-box-shadow: 2px 2px 5px 0px rgba(0, 0, 0, 0.53);
+  box-shadow: 2px 2px 5px 0px rgba(0, 0, 0, 0.53);
+  border-radius: 5px;
+}
+
+.container:hover {
+  border-color: green;
+}
+
+.thumbnail {
+  border-top-right-radius: 3px;
+  border-top-left-radius: 3px;
+
+  width: 100%;
+  object-fit: cover;
+  max-height: 160px;
+}
+
+.info {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-height: 200px;
+}
+
+.description {
+  color: gray;
+  font-size: 1rem;
+}
+
+.edit {
+  color: blue;
+  text-decoration: none;
+  width: max-content;
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.edit > svg {
+  display: inline-flex;
+  align-items: center;
+  border-bottom: 2px solid rgb(255, 255, 255);
+}
+
+.edit:hover {
+  text-decoration: underline;
+}
+
+.tags {
+  display: inline-flex;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  gap: 0.5rem;
+}
+
+.tags > a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  padding: 0.3rem;
+  text-transform: lowercase;
+  text-decoration: underline;
+  border-radius: 5px;
+  background-color: cadetblue;
+}
+
+.data {
+  border-radius: 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: cadetblue;
+  width: min-content;
+  padding: 0.3rem;
+  color: white;
+}
+
+.title {
+  font-size: 1.5rem;
+}

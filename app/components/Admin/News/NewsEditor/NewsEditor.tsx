@@ -1,48 +1,41 @@
-import { Post } from '@prisma/client';
-import { SerializeFrom } from '@remix-run/node';
-import { useSubmit } from '@remix-run/react';
-import { Bold } from '@tiptap/extension-bold';
-import { Image as ImageExtension } from '@tiptap/extension-image';
-import { Italic } from '@tiptap/extension-italic';
-import { Link } from '@tiptap/extension-link';
-import { Underline } from '@tiptap/extension-underline';
-import { EditorContent, useEditor } from '@tiptap/react';
-import { StarterKit } from '@tiptap/starter-kit';
-import { useState } from 'react';
+import {Post} from '@prisma/client';
+import {SerializeFrom} from '@remix-run/node';
+import {useSubmit} from '@remix-run/react';
+import {Image as ImageExtension} from '@tiptap/extension-image';
+import {Link} from '@tiptap/extension-link';
+import {Underline} from '@tiptap/extension-underline';
+import {EditorContent, useEditor} from '@tiptap/react';
+import {StarterKit} from '@tiptap/starter-kit';
+import {useState} from 'react';
 import useSaveImage from '~/hooks/useSaveImage';
-import { Button } from '~/ui/Button/Button';
+import {Button} from '~/ui/Button/Button';
 import ToolBar from './ToolBar/ToolBar';
 import styles from './styles.module.css';
 
 type NewsEditorType = {
-  post: SerializeFrom<Post | null>
-}
+  post: SerializeFrom<Post>;
+};
 
-const NewsEditor = ({ post }: NewsEditorType) => {
-  const { saveImage } = useSaveImage();
-  if (!post?.content) throw new Error("Not found")
-  const [content, setContent] = useState<string | undefined>(JSON.parse(post.content))
-  const [files, setFiles] = useState<File[]>([])
+const NewsEditor = ({post}: NewsEditorType) => {
+  const {saveImage} = useSaveImage();
+  const [content, setContent] = useState<string>(JSON.parse(post.content));
+  const [files, setFiles] = useState<File[]>([]);
 
-  const submit = useSubmit()
+  const submit = useSubmit();
 
   const editor = useEditor({
     extensions: [
       StarterKit,
       ImageExtension,
-      Bold,
       Underline,
-      Italic,
       Link.configure({
         openOnClick: false,
       }),
     ],
-    onUpdate: ((editor) => {
-
-      const content = editor.editor.getHTML()
-      setContent(content)
-    }),
-
+    onUpdate: editor => {
+      const content = editor.editor.getHTML();
+      setContent(content);
+    },
 
     editorProps: {
       handleDrop: (view, event, slice, moved) => {
@@ -62,19 +55,17 @@ const NewsEditor = ({ post }: NewsEditorType) => {
                 'Your images need to be less than 5000 pixels in height and width.'
               );
             } else {
-              setFiles(prev => [file, ...prev])
-
-              console.log("🚀 ~ NewsEditor ~ file:", file.name)
+              setFiles(prev => [file, ...prev]);
               const image = new Image();
               image.src = `/uploads/${file.name}`;
               image.onload = () => {
-                const { schema } = view.state;
+                const {schema} = view.state;
                 const coordinates = view.posAtCoords({
                   left: event.clientX,
                   top: event.clientY,
                 });
                 if (!coordinates) throw new Error('Not found');
-                const node = schema.nodes.image.create({ src: img.src });
+                const node = schema.nodes.image.create({src: img.src});
                 const transaction = view.state.tr.insert(
                   coordinates?.pos,
                   node
@@ -89,30 +80,32 @@ const NewsEditor = ({ post }: NewsEditorType) => {
       },
     },
     content: `
-    ${content ? content : ""}`
-    ,
+    ${content ? content : ''}`,
   });
   if (!editor) {
     return <div>Loading...</div>;
   }
   const handleSubmit = () => {
-    const formData = new FormData()
-    formData.set("postContent", content ? content : "")
+    const formData = new FormData();
+    formData.set('postContent', content ? content : '');
     files.map(file =>
       saveImage({
         action: '/admin/news/1/upload/',
         file,
         navigate: false,
-      }))
+      })
+    );
 
-    submit(formData, { action: "/admin/news/1/edit", method: "post", navigate: false })
-  }
+    submit(formData, {
+      action: '/admin/news/1/edit',
+      method: 'post',
+      navigate: false,
+    });
+  };
 
   return (
     <div className={styles.container}>
-      <Button onClick={() => handleSubmit()}>
-        Save
-      </Button>
+      <Button onClick={() => handleSubmit()}>Save</Button>
       <ToolBar editor={editor} />
 
       <EditorContent className={styles.editor} editor={editor} />

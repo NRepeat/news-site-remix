@@ -21,12 +21,23 @@ model Page {
 }
 
 model Post {
-  id        Int      @id @default(autoincrement())
-  title     String
-  slug      String   @unique
-  content   String   @default("[]")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  page      Page     @relation(fields: [pageId], references: [id])
-  pageId    Int
+  id          Int      @id @default(autoincrement())
+  title       String
+  slug        String   @unique
+  thumbnail   String   @default("")
+  description String   @default("Post")
+  tags        Tags[]
+  content     String   @default("[]")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  page        Page?    @relation(fields: [pageId], references: [id])
+  pageId      Int?
+}
+
+model Tags {
+  id     Int    @id @default(autoincrement())
+  slug   String @unique
+  name   String
+  postId Int
+  post   Post   @relation(fields: [postId], references: [id])
 }
