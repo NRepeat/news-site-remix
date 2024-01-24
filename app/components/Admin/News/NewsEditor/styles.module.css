@@ -2,27 +2,55 @@
   padding: 2rem;
   display: flex;
   justify-content: center;
+  width: 900px;
+  max-width: 900px;
 }
 
-.editor > div {
+.spinner {
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 20;
+  transform: translate(-50%, -50%);
+  fill: cadetblue;
+}
+
+.loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+
+}
+
+.editor>div {
   display: flex;
   flex-direction: column;
-  width: 50%;
+
   padding: 1rem;
 }
 
-.editor > div > img {
+.editor>div>img {
   width: 100%;
   border: 5px solid white;
 }
 
-.editor > div > img:hover {
+.editor>div>img:hover {
   border: 5px solid green;
   border-radius: 5px;
   cursor: grab;
 }
 
-.editor > div > p > code {
+.editor>div>p>code {
   padding: 0.2rem;
   background-color: antiquewhite;
 }
@@ -32,5 +60,25 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding-top: 2rem;
+  width: 100%;
+  position: relative;
+}
+
+.wrapper {
+  padding-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 900px;
+  max-width: 900px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }

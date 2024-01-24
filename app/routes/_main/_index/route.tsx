@@ -1,15 +1,14 @@
-import {json} from '@remix-run/node';
-import {useLoaderData} from '@remix-run/react';
+import { json } from '@remix-run/node';
+import { useLoaderData } from '@remix-run/react';
 import PageWrapper from '~/components/PageWrapper/PageWrapper';
-import {getPage} from '~/service/page.server';
-import {getPostById} from '~/service/post.server';
+import { getPage } from '~/service/page.server';
+import { getPostById } from '~/service/post.server';
 
 export async function loader() {
   try {
-    const page = await getPage({slug: 'main'});
+    const page = await getPage({ slug: 'main' });
     const post = await getPostById(4);
-    console.log('🚀 ~ loader ~ post:', post);
-    return json({page, post});
+    return json({ page, post });
   } catch (error) {
     throw new Error('Not found');
   }

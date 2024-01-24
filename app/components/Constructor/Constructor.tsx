@@ -1,20 +1,20 @@
-import {useDndMonitor, useDroppable} from '@dnd-kit/core';
+import { useDndMonitor, useDroppable } from '@dnd-kit/core';
+import { Page } from '@prisma/client';
+import { SerializeFrom } from '@remix-run/node';
+import { useSubmit } from '@remix-run/react';
 import clsx from 'clsx';
-import ConstructorElementWrapper from '../ConstructorElementWrapper/ConstructorElementWrapper';
-import {PageBlockInstance} from '../PageConstructorBlocks/PageConstructorBlocks';
-import styles from './styles.module.css';
-import {FC} from 'react';
-import {useSubmit} from '@remix-run/react';
-import {SerializeFrom} from '@remix-run/node';
-import {Page} from '@prisma/client';
-import {onDragEndHandler} from './Handlers/onDragEnd';
+import { FC } from 'react';
 import Sidebar from '../Admin/Sidebar/Sidebar';
+import ConstructorElementWrapper from '../ConstructorElementWrapper/ConstructorElementWrapper';
+import { PageBlockInstance } from '../PageConstructorBlocks/PageConstructorBlocks';
+import { onDragEndHandler } from './Handlers/onDragEnd';
+import styles from './styles.module.css';
 
 type ConstructorProps = {
   page: SerializeFrom<Page>;
 };
 
-const Constructor: FC<ConstructorProps> = ({page}) => {
+const Constructor: FC<ConstructorProps> = ({ page }) => {
   let content;
   let elements: PageBlockInstance[] = [];
   if (page?.content) content = JSON.parse(page.content);
@@ -31,7 +31,7 @@ const Constructor: FC<ConstructorProps> = ({page}) => {
     const type = 'addElement';
     const serializedNewElement = JSON.stringify(newElement);
     sub(
-      {index, newElement: serializedNewElement, type},
+      { index, newElement: serializedNewElement, type },
       {
         action: `/admin/${page?.slug}/constructor`,
         method: 'POST',
@@ -39,24 +39,14 @@ const Constructor: FC<ConstructorProps> = ({page}) => {
       }
     );
   };
-  // const removeElement = ({id}: {id: string}) => {
-  //   const type = 'removeElement';
-  //   sub(
-  //     {id, type},
-  //     {
-  //       action: `/admin/${page?.slug}/constructor`,
-  //       method: 'POST',
-  //       navigate: false,
-  //     }
-  //   );
-  // };
+
 
   const droppable = useDroppable({
     id: 'constructor-droppable-area',
-    data: {isConstructorDroppableArea: true},
+    data: { isConstructorDroppableArea: true },
   });
   useDndMonitor({
-    onDragEnd: e => onDragEndHandler({event: e, addElement, elements}),
+    onDragEnd: e => onDragEndHandler({ event: e, addElement, elements }),
   });
   return (
     <>

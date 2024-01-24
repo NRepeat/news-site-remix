@@ -1,11 +1,12 @@
-import {Page} from '@prisma/client';
-import {SerializeFrom} from '@remix-run/node';
+import { Page } from '@prisma/client';
+import { SerializeFrom } from '@remix-run/node';
 import parse from 'html-react-parser';
-import {PostWithTags} from '~/service/post.server';
+import { PostWithTags } from '~/service/post.server';
 import {
   PageBlockInstance,
   PageBlocks,
 } from '../PageConstructorBlocks/PageConstructorBlocks';
+import styles from './styles.module.css';
 const PageWrapper = ({
   page,
   post,
@@ -23,10 +24,10 @@ const PageWrapper = ({
   });
   const content = parse(postP);
   return (
-    <>
+    <div className={styles.container}>
       {prevComp}
       {content}
-    </>
+    </div>
   );
 };
 

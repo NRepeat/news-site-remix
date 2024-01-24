@@ -1,26 +1,26 @@
-import {Editor} from '@tiptap/react';
+import { Editor } from '@tiptap/react';
 import clsx from 'clsx';
-import React, {useCallback, useEffect, useState} from 'react';
-import {Button} from '~/ui/Button/Button';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Button } from '~/ui/Button/Button';
 import styles from './styles.module.css';
 
-const ToolBar = ({editor}: {editor: Editor}) => {
+const ToolBar = ({ editor, opacity }: { opacity: boolean, editor: Editor }) => {
   useEffect(() => {
     if (!editor) {
       console.error('Editor not found');
     }
   }, [editor]);
 
-  const {handleToggleLink, toggle: toggleLink} = SetToggleLink(editor);
-  const {handleToggleBold, toggle: toggleBold} = SetToggleBold(editor);
-  const {handleToggleItalic, toggle: toggleItalic} = SetToggleItalic(editor);
-  const {handleToggleStrikethrough, toggle: toggleStrikethrough} =
+  const { handleToggleLink, toggle: toggleLink } = SetToggleLink(editor);
+  const { handleToggleBold, toggle: toggleBold } = SetToggleBold(editor);
+  const { handleToggleItalic, toggle: toggleItalic } = SetToggleItalic(editor);
+  const { handleToggleStrikethrough, toggle: toggleStrikethrough } =
     SetToggleStrikethrough(editor);
-  const {handleToggleUnderline, toggle: toggleUnderline} =
+  const { handleToggleUnderline, toggle: toggleUnderline } =
     SetToggleUnderline(editor);
-  const {handleToggleCode, toggle: toggleCode} = SetToggleCode(editor);
+  const { handleToggleCode, toggle: toggleCode } = SetToggleCode(editor);
   return (
-    <div className={styles.container}>
+    <div style={{ display: `${opacity ? "none" : "inline-flex"}` }} className={styles.container}>
       <EditorToolBarButton
         editor={editor}
         isActive={toggleLink}
@@ -87,72 +87,64 @@ const EditorToolBarButton = ({
   <Button
     onClick={() => onClick(editor)}
     disabled={disable}
-    className={clsx(styles.button, {[styles.isActive]: isActive})}
+    className={clsx(styles.button, { [styles.isActive]: isActive })}
   >
     {children}
   </Button>
 );
 
-const toggleFormat = (editor: Editor, format: string) => {
-  const isActive = editor.isActive(format);
 
-  if (isActive) {
-    editor.chain().focus().unsetMark(format).run();
-  } else {
-    editor.chain().focus().setMark(format).run();
-  }
-};
 
 export const SetToggleBold = (editor: Editor) => {
   const [toggle, setToggle] = useState<boolean>(editor.isActive('bold'));
 
   const handleToggleBold = () => {
-    toggleFormat(editor, 'bold');
-    setToggle(!toggle);
+    editor.chain().focus().toggleBold().run();
+    setToggle(prev => !prev)
   };
 
-  return {handleToggleBold, toggle};
+  return { handleToggleBold, toggle };
 };
 export const SetToggleItalic = (editor: Editor) => {
   const [toggle, setToggle] = useState<boolean>(editor.isActive('italic'));
 
   const handleToggleItalic = () => {
-    toggleFormat(editor, 'italic');
-    setToggle(!toggle);
+    editor.chain().focus().toggleItalic().run();
+    setToggle(prev => !prev)
   };
 
-  return {handleToggleItalic, toggle};
+  return { handleToggleItalic, toggle };
 };
 export const SetToggleUnderline = (editor: Editor) => {
   const [toggle, setToggle] = useState<boolean>(editor.isActive('underline'));
 
   const handleToggleUnderline = () => {
-    toggleFormat(editor, 'underline');
-    setToggle(!toggle);
+    editor.chain().focus().toggleUnderline().run();
+    setToggle(prev => !prev)
   };
 
-  return {handleToggleUnderline, toggle};
+  return { handleToggleUnderline, toggle };
 };
 export const SetToggleStrikethrough = (editor: Editor) => {
   const [toggle, setToggle] = useState<boolean>(editor.isActive('strike'));
 
   const handleToggleStrikethrough = () => {
-    toggleFormat(editor, 'strike');
-    setToggle(!toggle);
+    editor.chain().focus().toggleStrike().run();
+    setToggle(prev => !prev)
   };
 
-  return {handleToggleStrikethrough, toggle};
+  return { handleToggleStrikethrough, toggle };
 };
 
 export const SetToggleCode = (editor: Editor) => {
   const [toggle, setToggle] = useState<boolean>(editor.isActive('code'));
 
   const handleToggleCode = () => {
-    toggleFormat(editor, 'code');
-    setToggle(!toggle);
+    editor.chain().focus().toggleCode().run();
+    setToggle(prev => !prev)
   };
 
-  return {handleToggleCode, toggle};
+  return { handleToggleCode, toggle };
 };
 
 export const SetToggleLink = (editor: Editor) => {
@@ -170,9 +162,9 @@ export const SetToggleLink = (editor: Editor) => {
       setToggle(!toggle);
       return;
     }
-    editor.chain().focus().extendMarkRange('link').setLink({href: url}).run();
+    editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
     setToggle(!toggle);
   }, [editor, toggle]);
 
-  return {handleToggleLink, toggle};
+  return { handleToggleLink, toggle };
 };

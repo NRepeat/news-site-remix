@@ -1,20 +1,25 @@
-import {PageBlockInstance} from '~/components/PageConstructorBlocks/PageConstructorBlocks';
-import CustomSlider, {Slide} from '../Slider/Slider';
-import styles from './styles.module.css';
+import { PageBlockInstance } from '~/components/PageConstructorBlocks/PageConstructorBlocks';
+import { ImageBlockContentType } from '../../ImageBlock/ImageBlock';
+import CustomSlider, { Slide } from '../Slider/Slider';
 function PreviewComponent({
   elementInstance,
 }: {
   elementInstance: PageBlockInstance;
 }) {
-  const images = elementInstance.additionalProperties!.path as string[];
+  const content = elementInstance.additionalProperties?.content
+    ? (JSON.parse(
+      elementInstance.additionalProperties?.content as string
+    ) as ImageBlockContentType[])
+    : '';
+
   return (
-    <div className={styles.sliderContainer}>
-      <CustomSlider>
-        {images.map((url, i) => (
-          <Slide key={i} img={url} text={url} />
-        ))}
-      </CustomSlider>
-    </div>
+
+
+
+    <CustomSlider >
+      {Array.isArray(content) &&
+        content.map(img => <Slide key={img.filepath} img={img.name} />)}
+    </CustomSlider>
   );
 }
 

@@ -1,5 +1,5 @@
-import {useEffect, useState} from 'react';
-import {PageBlockInstance} from '~/components/PageConstructorBlocks/PageConstructorBlocks';
+import { PageBlockInstance } from '~/components/PageConstructorBlocks/PageConstructorBlocks';
+import { ImageBlockContentType } from '../ImageBlock';
 import styles from './styles.module.css';
 
 function PreviewComponent({
@@ -7,52 +7,27 @@ function PreviewComponent({
 }: {
   elementInstance: PageBlockInstance;
 }) {
-  const [images, setImages] = useState<string>('');
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const loadImage = async () => {
-      try {
-        const i = await fetch(
-          `/uploads/${elementInstance.additionalProperties?.path}`
-        );
-
-        setImages(i.url);
-        setIsLoading(false);
-      } catch (error) {
-        console.error('Error loading image', error);
-        setIsLoading(false);
-      }
-    };
-
-    if (elementInstance.additionalProperties?.path) {
-      loadImage();
-    } else {
-      setIsLoading(false);
-    }
-  }, [elementInstance.additionalProperties?.path]);
+  const content = elementInstance.additionalProperties?.content
+    ? (JSON.parse(
+      elementInstance.additionalProperties?.content as string
+    ) as ImageBlockContentType[])
+    : '';
 
   return (
-    <div className={styles.container}>
-      {isLoading ? (
-        <p>Loading...</p>
-      ) : (
-        <div
-          style={{
-            justifyContent: `${elementInstance.additionalProperties?.align}`,
-          }}
-          className={styles.previewImageContainer}
-        >
+    <div
+      className={styles.container}
+    >
+
+
+      {content &&
+        content.map((img, index) => (
           <img
-            style={{
-              maxHeight: `${elementInstance.additionalProperties?.height}`,
-              maxWidth: `${elementInstance.additionalProperties?.width}`,
-            }}
-            src={images}
+            key={index}
+            className={styles.img}
+            src={`/uploads/${img.name}`}
             alt="asd"
           />
-        </div>
-      )}
+        ))}
     </div>
   );
 }

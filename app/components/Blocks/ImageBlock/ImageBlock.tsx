@@ -1,11 +1,11 @@
-import {BsFillFileImageFill} from 'react-icons/bs';
+import { BsFillFileImageFill } from 'react-icons/bs';
 import {
   BlocksType,
   PageBlock,
   PageBlockInstance,
 } from '~/components/PageConstructorBlocks/PageConstructorBlocks';
-import PreviewComponent from '../SliderBlock/PreviewComponent/PreviewComponent';
 import ConstructorComponent from './ConstructorComponent/ConstructorComponent';
+import PreviewComponent from './PreviewComponent/PreviewComponent';
 import PropertiesComponent from './PropertiesComponent/PropertiesComponent';
 export type TextBlockInstanceType = PageBlockInstance & {
   additionalProperties: typeof additionalProperties;
@@ -31,7 +31,7 @@ const additionalProperties = {
 export const ImageBlock: PageBlock = {
   type,
 
-  construct: ({id}) => ({
+  construct: ({ id }) => ({
     id,
     type,
     additionalProperties,

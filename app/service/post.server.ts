@@ -71,6 +71,7 @@ export const updatePost = async (
     });
     return updatedPost;
   } catch (error) {
+    console.log('🚀 ~ error:', error);
     throw new Error('Update post error');
   }
 };

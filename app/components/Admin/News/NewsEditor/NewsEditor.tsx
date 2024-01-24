@@ -1,25 +1,31 @@
-import {Post} from '@prisma/client';
-import {SerializeFrom} from '@remix-run/node';
-import {useSubmit} from '@remix-run/react';
-import {Image as ImageExtension} from '@tiptap/extension-image';
-import {Link} from '@tiptap/extension-link';
-import {Underline} from '@tiptap/extension-underline';
-import {EditorContent, useEditor} from '@tiptap/react';
-import {StarterKit} from '@tiptap/starter-kit';
-import {useState} from 'react';
+import { SerializeFrom } from '@remix-run/node';
+import { useNavigation, useSubmit } from '@remix-run/react';
+import { Image as ImageExtension } from '@tiptap/extension-image';
+import { Link } from '@tiptap/extension-link';
+import { Underline } from '@tiptap/extension-underline';
+import { EditorContent, useEditor } from '@tiptap/react';
+import { StarterKit } from '@tiptap/starter-kit';
+import clsx from 'clsx';
+import { useState } from 'react';
+import { FaSpinner } from 'react-icons/fa';
+import useOpacity from '~/hooks/useOpacity';
 import useSaveImage from '~/hooks/useSaveImage';
-import {Button} from '~/ui/Button/Button';
+import { PostWithTags } from '~/service/post.server';
+import NewsToolBar from '../ToolBar/ToolBar';
 import ToolBar from './ToolBar/ToolBar';
 import styles from './styles.module.css';
-
 type NewsEditorType = {
-  post: SerializeFrom<Post>;
+  post: SerializeFrom<PostWithTags>;
 };
 
-const NewsEditor = ({post}: NewsEditorType) => {
-  const {saveImage} = useSaveImage();
+const NewsEditor = ({ post }: NewsEditorType) => {
+
+
+  const { opacity, setOpacity } = useOpacity()
+  const { saveImage } = useSaveImage();
   const [content, setContent] = useState<string>(JSON.parse(post.content));
   const [files, setFiles] = useState<File[]>([]);
+  const navigation = useNavigation()
 
   const submit = useSubmit();
 
@@ -32,6 +38,7 @@ const NewsEditor = ({post}: NewsEditorType) => {
         openOnClick: false,
       }),
     ],
+    // editable: opacity,
     onUpdate: editor => {
       const content = editor.editor.getHTML();
       setContent(content);
@@ -59,13 +66,13 @@ const NewsEditor = ({post}: NewsEditorType) => {
               const image = new Image();
               image.src = `/uploads/${file.name}`;
               image.onload = () => {
-                const {schema} = view.state;
+                const { schema } = view.state;
                 const coordinates = view.posAtCoords({
                   left: event.clientX,
                   top: event.clientY,
                 });
                 if (!coordinates) throw new Error('Not found');
-                const node = schema.nodes.image.create({src: img.src});
+                const node = schema.nodes.image.create({ src: img.src });
                 const transaction = view.state.tr.insert(
                   coordinates?.pos,
                   node
@@ -82,11 +89,14 @@ const NewsEditor = ({post}: NewsEditorType) => {
     content: `
     ${content ? content : ''}`,
   });
+  const [loading, setLoading] = useState(false)
   if (!editor) {
     return <div>Loading...</div>;
   }
   const handleSubmit = () => {
     const formData = new FormData();
+    setLoading(true)
+
     formData.set('postContent', content ? content : '');
     files.map(file =>
       saveImage({
@@ -97,19 +107,34 @@ const NewsEditor = ({post}: NewsEditorType) => {
     );
 
     submit(formData, {
-      action: '/admin/news/1/edit',
+      action: `/admin/news/${post.id}/edit`,
       method: 'post',
-      navigate: false,
     });
+
+    setInterval(() => setLoading(false), 1000)
   };
-
+  const handlePreviewMode = () => {
+    setOpacity(prev => !prev)
+  }
   return (
-    <div className={styles.container}>
-      <Button onClick={() => handleSubmit()}>Save</Button>
-      <ToolBar editor={editor} />
+    <>
 
-      <EditorContent className={styles.editor} editor={editor} />
-    </div>
+      <div className={clsx({ [styles.loading]: loading })} >
+        {navigation.state === 'submitting' || loading && <FaSpinner className={styles.spinner} />}
+      </div>
+
+      <div className={clsx(styles.container)}>
+
+        <NewsToolBar opacity={opacity} handlePreviewMode={handlePreviewMode} handleSubmit={handleSubmit} post={post} />
+        <div className={styles.wrapper}>
+          <ToolBar opacity={opacity} editor={editor} />
+
+          <EditorContent className={styles.editor} editor={editor} />
+        </div>
+
+      </div>
+    </>
+
   );
 };
 
