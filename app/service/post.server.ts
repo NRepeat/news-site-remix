@@ -6,17 +6,25 @@ type createPostType = {
 };
 export type PostWithTags = Post & {tags: Tags[]};
 export type GetAllPostsType = PostWithTags[];
+type updatePostType = {
+  title?: string;
+  article?: string;
+  description?: string;
+  image?: string;
+  thumbnail?: string;
+};
 export const getAllPosts = async (): Promise<GetAllPostsType> => {
   try {
     const posts = await prisma.post.findMany({
       select: {
         id: true,
         title: true,
-        content: true,
+        article: true,
         description: true,
         pageId: true,
         thumbnail: true,
         slug: true,
+        image: true,
         createdAt: true,
         updatedAt: true,
         tags: {
@@ -62,7 +70,7 @@ export const getPostBySlug = async (postSlug: string) => {
 
 export const updatePost = async (
   postId: number,
-  updatedData: {title?: string; content?: string}
+  updatedData: updatePostType
 ) => {
   try {
     const updatedPost = await prisma.post.update({
@@ -93,7 +101,7 @@ export const createPost = async ({data}: createPostType) => {
       data: {
         title: data.title,
         slug: data.slug,
-        content: data.content,
+        article: data.content,
         page: {connect: {slug: 'main'}},
       },
     });

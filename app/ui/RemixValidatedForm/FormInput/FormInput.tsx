@@ -1,22 +1,24 @@
-import {useField} from 'remix-validated-form';
+import { useField } from 'remix-validated-form';
+import { Input } from '../../Input/Input';
 import styles from './styles.module.css';
-import {Input} from '../Input/Input';
 type MyInputProps = {
   name: string;
   label?: string;
   type?: React.HTMLInputTypeAttribute | undefined;
   placeholder?: string;
   value?: number | string | undefined;
+  onChange?: React.ChangeEventHandler<HTMLInputElement>
 };
 
-export const FormInput = ({
+const FormInput = ({
   name,
   label,
   type,
   placeholder,
   value,
+  onChange
 }: MyInputProps) => {
-  const {error, getInputProps} = useField(name);
+  const { error, getInputProps } = useField(name);
 
   return (
     <div className={styles.input}>
@@ -25,10 +27,11 @@ export const FormInput = ({
           {label}
         </label>
         <Input
-          {...getInputProps({value, type, id: name, placeholder, min: '0'})}
+          {...getInputProps({ onChange, value, type, id: name, placeholder, min: '0' })}
         />
       </div>
       {error && <p className={styles.error}>{error}</p>}
     </div>
   );
 };
+export default FormInput
